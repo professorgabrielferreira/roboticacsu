@@ -196,10 +196,37 @@
   }
 
   @media (max-width: 480px) { .panel { padding: 18px; border-radius: 14px; } section { margin-top: 34px; } }
+
+  /* Barra de navegação do site Robótica */
+  .barra-site {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    gap: 10px 16px; margin-bottom: 22px; padding-bottom: 14px;
+    border-bottom: 1px solid var(--paper-line);
+  }
+  .voltar-inicio {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--ink); text-decoration: none;
+    font-family: "Baloo 2", sans-serif; font-weight: 700; font-size: 16px;
+    padding: 8px 16px; border-radius: 12px; border: 2px solid var(--paper-line);
+  }
+  .voltar-inicio:hover { border-color: var(--ink-soft); }
+  .progresso-salvo { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--ink-soft); }
+  .apagar-progresso {
+    background: none; border: none; color: var(--seal); text-decoration: underline;
+    font: inherit; font-weight: 700; cursor: pointer; padding: 6px 4px; white-space: nowrap;
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
+
+  <nav class="barra-site" aria-label="Navegação do site">
+    <a class="voltar-inicio" href="index.html"><span aria-hidden="true">&#8592;</span> Voltar para a página inicial</a>
+    <div class="progresso-salvo">
+      <span id="avisoSalvo">Seu progresso fica salvo neste navegador.</span>
+      <button class="apagar-progresso" id="apagarProgresso" type="button">Apagar progresso</button>
+    </div>
+  </nav>
 
   <header class="hero-top">
     <h1>A Roda dos Segredos</h1>
@@ -277,6 +304,22 @@
 <script>
 (function () {
   "use strict";
+
+  /* ---------- Progresso salvo no navegador (localStorage) ---------- */
+  var CHAVES = { roda: "roboticacsu:cifra-roda", desafio: "roboticacsu:cifra-desafio" };
+  function lerSalvo(chave) {
+    try { return JSON.parse(localStorage.getItem(chave)); } catch (e) { return null; }
+  }
+  function gravar(chave, dados) {
+    try { localStorage.setItem(chave, JSON.stringify(dados)); } catch (e) { /* armazenamento indisponível */ }
+  }
+  document.getElementById("apagarProgresso").addEventListener("click", function () {
+    if (!confirm("Apagar todo o progresso da Roda dos Segredos e do Desafio do Mensageiro neste navegador?")) return;
+    try { localStorage.removeItem(CHAVES.roda); localStorage.removeItem(CHAVES.desafio); } catch (e) {}
+    apagando = true;
+    location.reload();
+  });
+  var apagando = false;
 
   var ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   var N = 26;
@@ -356,6 +399,12 @@
     updateWheel();
     exampleLine.textContent = "A vira " + shiftChar("A", k) + ", B vira " + shiftChar("B", k) + ", C vira " + shiftChar("C", k);
     updateTool();
+    salvarRoda();
+  }
+
+  function salvarRoda() {
+    if (apagando || !toolInput) return;
+    gravar(CHAVES.roda, { key: state.key, mode: state.mode, texto: toolInput.value });
   }
 
   document.getElementById("keyMinus").addEventListener("click", function () { setKey(state.key - 1); });
@@ -390,15 +439,19 @@
       toolInput.placeholder = "Cole aqui a mensagem cifrada...";
     }
     updateTool();
+    salvarRoda();
   }
 
   modeEncodeBtn.addEventListener("click", function () { setMode("encode"); });
   modeDecodeBtn.addEventListener("click", function () { setMode("decode"); });
-  toolInput.addEventListener("input", updateTool);
+  toolInput.addEventListener("input", function () { updateTool(); salvarRoda(); });
 
+  /* Restaura o que foi salvo na última visita */
+  var salvoRoda = lerSalvo(CHAVES.roda) || {};
   buildRings();
-  setKey(0);
-  setMode("encode");
+  toolInput.value = typeof salvoRoda.texto === "string" ? salvoRoda.texto : "";
+  setKey(typeof salvoRoda.key === "number" ? salvoRoda.key : 0);
+  setMode(salvoRoda.mode === "decode" ? "decode" : "encode");
 })();
 </script>
 </body>

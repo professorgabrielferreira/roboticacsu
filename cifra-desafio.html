@@ -247,10 +247,37 @@
   button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
   @media (max-width: 480px) { .panel { padding: 18px; border-radius: 14px; } section { margin-top: 32px; } }
+
+  /* Barra de navegação do site Robótica */
+  .barra-site {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    gap: 10px 16px; margin-bottom: 22px; padding-bottom: 14px;
+    border-bottom: 1px solid var(--paper-line);
+  }
+  .voltar-inicio {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--ink); text-decoration: none;
+    font-family: "Baloo 2", sans-serif; font-weight: 700; font-size: 16px;
+    padding: 8px 16px; border-radius: 12px; border: 2px solid var(--paper-line);
+  }
+  .voltar-inicio:hover { border-color: var(--ink-soft); }
+  .progresso-salvo { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--ink-soft); }
+  .apagar-progresso {
+    background: none; border: none; color: var(--seal); text-decoration: underline;
+    font: inherit; font-weight: 700; cursor: pointer; padding: 6px 4px; white-space: nowrap;
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
+
+  <nav class="barra-site" aria-label="Navegação do site">
+    <a class="voltar-inicio" href="index.html"><span aria-hidden="true">&#8592;</span> Voltar para a página inicial</a>
+    <div class="progresso-salvo">
+      <span id="avisoSalvo">Seu progresso fica salvo neste navegador.</span>
+      <button class="apagar-progresso" id="apagarProgresso" type="button">Apagar progresso</button>
+    </div>
+  </nav>
 
   <header class="hero-top">
     <h1>Desafio do Mensageiro</h1>
@@ -306,6 +333,22 @@
 <script>
 (function () {
   "use strict";
+
+  /* ---------- Progresso salvo no navegador (localStorage) ---------- */
+  var CHAVES = { roda: "roboticacsu:cifra-roda", desafio: "roboticacsu:cifra-desafio" };
+  function lerSalvo(chave) {
+    try { return JSON.parse(localStorage.getItem(chave)); } catch (e) { return null; }
+  }
+  function gravar(chave, dados) {
+    try { localStorage.setItem(chave, JSON.stringify(dados)); } catch (e) { /* armazenamento indisponível */ }
+  }
+  document.getElementById("apagarProgresso").addEventListener("click", function () {
+    if (!confirm("Apagar todo o progresso da Roda dos Segredos e do Desafio do Mensageiro neste navegador?")) return;
+    try { localStorage.removeItem(CHAVES.roda); localStorage.removeItem(CHAVES.desafio); } catch (e) {}
+    apagando = true;
+    location.reload();
+  });
+  var apagando = false;
 
   var ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   var N = 26;
@@ -384,9 +427,10 @@
     { plain: "VOCE E UM EXPERT EM CIFRAS", hint: "Voce chegou ate o final, parabens!" }
   ];
 
-  var challenges = bank.map(function (item, i) {
+  var todos = bank.map(function (item, i) {
     var key = ((i * 7) % 25) + 1;
     return {
+      id: i,
       plain: normalize(item.plain),
       key: key,
       cipher: shiftText(item.plain, key),
@@ -394,17 +438,40 @@
     };
   });
 
-  /* Embaralha a ordem de apresentação a cada visita, mantendo o banco intacto */
-  for (var i = challenges.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var tmp = challenges[i];
-    challenges[i] = challenges[j];
-    challenges[j] = tmp;
+  /* Recupera o progresso salvo; sem progresso, sorteia uma nova ordem de desafios */
+  var salvo = lerSalvo(CHAVES.desafio);
+  var ordemValida = salvo && Array.isArray(salvo.ordem) && salvo.ordem.length === todos.length &&
+    salvo.ordem.slice().sort(function (a, b) { return a - b; }).every(function (v, i) { return v === i; });
+
+  var ordem;
+  if (ordemValida) {
+    ordem = salvo.ordem;
+  } else {
+    ordem = todos.map(function (c) { return c.id; });
+    for (var i = ordem.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = ordem[i]; ordem[i] = ordem[j]; ordem[j] = tmp;
+    }
+    salvo = null;
   }
+  var challenges = ordem.map(function (id) { return todos[id]; });
 
   var chIndex = 0;
   var solvedCount = 0;
   var solvedCurrent = false;
+  var resolvidos = ordemValida && Array.isArray(salvo.resolvidos) ? salvo.resolvidos : [];
+  var dicaVista = false;
+
+  function salvarDesafio() {
+    if (apagando) return;
+    gravar(CHAVES.desafio, {
+      ordem: ordem,
+      atual: chIndex,
+      resolvidos: resolvidos,
+      rascunho: answerInput.value,
+      dica: dicaVista
+    });
+  }
 
   var progressLabel = document.getElementById("progressLabel");
   var solvedLabel = document.getElementById("solvedLabel");
@@ -430,8 +497,10 @@
 
   function loadChallenge(i) {
     chIndex = i;
-    solvedCurrent = false;
     var c = challenges[chIndex];
+    solvedCount = resolvidos.length;
+    solvedCurrent = resolvidos.indexOf(c.id) !== -1;
+    dicaVista = false;
 
     progressLabel.textContent = "Desafio " + (chIndex + 1) + " de " + challenges.length;
     solvedLabel.textContent = solvedCount + " decifradas";
@@ -449,7 +518,21 @@
     successBanner.classList.remove("show");
     nextBtn.disabled = true;
 
+    if (solvedCurrent) mostrarAcerto();
     answerInput.focus();
+    salvarDesafio();
+  }
+
+  function mostrarAcerto() {
+    answerInput.value = challenges[chIndex].plain;
+    feedbackMessage.textContent = "Certinho!";
+    feedbackMessage.className = "feedback-message correct";
+    wordFeedback.innerHTML = "";
+    successBanner.textContent = chIndex === challenges.length - 1
+      ? "Você decifrou todas as mensagens do desafio!"
+      : successMessages[chIndex % successMessages.length];
+    successBanner.classList.add("show");
+    nextBtn.disabled = chIndex >= challenges.length - 1;
   }
 
   function renderWordFeedback(typedWords, expectedWords) {
@@ -476,18 +559,14 @@
     var allCorrect = typedNorm === expectedNorm && typedNorm.length > 0;
 
     if (allCorrect) {
-      feedbackMessage.textContent = "Certinho!";
-      feedbackMessage.className = "feedback-message correct";
-      wordFeedback.innerHTML = "";
       if (!solvedCurrent) {
         solvedCurrent = true;
-        solvedCount += 1;
+        resolvidos.push(c.id);
+        solvedCount = resolvidos.length;
         solvedLabel.textContent = solvedCount + " decifradas";
       }
-      var msg = successMessages[chIndex % successMessages.length];
-      successBanner.textContent = msg;
-      successBanner.classList.add("show");
-      nextBtn.disabled = false;
+      mostrarAcerto();
+      salvarDesafio();
     } else {
       feedbackMessage.textContent = "Quase lá! Confira palavra por palavra.";
       feedbackMessage.className = "feedback-message wrong";
@@ -500,16 +579,26 @@
   answerInput.addEventListener("keydown", function (e) {
     if (e.key === "Enter") checkAnswer();
   });
+  answerInput.addEventListener("input", salvarDesafio);
 
   hintBtn.addEventListener("click", function () {
     hintBox.textContent = challenges[chIndex].hint;
+    dicaVista = true;
+    salvarDesafio();
   });
 
   nextBtn.addEventListener("click", function () {
     if (chIndex < challenges.length - 1) loadChallenge(chIndex + 1);
   });
 
-  loadChallenge(0);
+  /* Retoma do ponto em que parou, com o rascunho e a dica, se houver */
+  var inicio = salvo && typeof salvo.atual === "number" ? Math.max(0, Math.min(salvo.atual, challenges.length - 1)) : 0;
+  loadChallenge(inicio);
+  if (salvo && salvo.atual === inicio && !solvedCurrent) {
+    if (typeof salvo.rascunho === "string") answerInput.value = salvo.rascunho;
+    if (salvo.dica) { hintBox.textContent = challenges[chIndex].hint; dicaVista = true; }
+    salvarDesafio();
+  }
 })();
 </script>
 </body>
