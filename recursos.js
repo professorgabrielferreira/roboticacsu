@@ -44,14 +44,25 @@
 
 const RECURSOS = [
   {
-    titulo: "A Roda dos Segredos: Cifra de César",
-    descricao: "Atividade interativa em que as crianças giram um disco de letras para descobrir como Júlio César escondia mensagens e escrevem seus próprios recados secretos. Inclui o Desafio do Mensageiro, com 50 mensagens para decifrar.",
-    turma: ["exploradores", "construtores", "inovadores"],
-    tipo: "atividade",
-    link: "cifra-roda.html",
-    data: "2026-09-22",
-    duracao: "1 a 2 aulas",
-    etiquetas: ["Criptografia", "Cifra de César", "Segurança de dados", "Roma Antiga", "Interativo"],
-    extra: { rotulo: "Desafio do Mensageiro", link: "cifra-desafio.html" }
-  },
+    "id": "a-roda-dos-segredos-cifra-de-cesar-2026-09-22",
+    "titulo": "A Roda dos Segredos: Cifra de César",
+    "descricao": "Atividade interativa para utilizar o disco de letras e descobrir como Júlio César escondia mensagens. O recurso permite escrever seu próprio recados secreto. Inclui o Desafio do Mensageiro, com 50 mensagens para decifrar.",
+    "turma": [
+      "construtores",
+      "inovadores"
+    ],
+    "tipo": "atividade",
+    "data": "2026-09-22",
+    "link": "cifra-roda.html",
+    "extra": {
+      "rotulo": "Desafio do Mensageiro",
+      "link": "cifra-desafio.html"
+    },
+    "etiquetas": [
+      "Criptografia",
+      "Cifra de César",
+      "Segurança de dados",
+      "Interativo"
+    ]
+  }
 ];
