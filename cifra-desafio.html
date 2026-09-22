@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Desafio do Mensageiro: Cifra de César</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parchment: #f2e6c9;
+    --parchment-2: #e9d7ac;
+    --ink: #3a2a17;
+    --ink-soft: #6b573c;
+    --seal: #a4303e;
+    --seal-dark: #7d2230;
+    --gold: #c1902b;
+    --gold-light: #e8c15c;
+    --moss: #5c7a52;
+    --moss-dark: #3f5936;
+    --paper-line: rgba(58, 42, 23, 0.14);
+    --focus: #2b5fa8;
+    color-scheme: light;
+  }
+
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --parchment: #241a10;
+      --parchment-2: #2e2214;
+      --ink: #f1e2bd;
+      --ink-soft: #cbb98f;
+      --seal: #e0596a;
+      --seal-dark: #c1465a;
+      --gold: #e8c15c;
+      --gold-light: #f3d685;
+      --moss: #8bb27c;
+      --moss-dark: #6c9660;
+      --paper-line: rgba(241, 226, 189, 0.16);
+      --focus: #8fbaf0;
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --parchment: #241a10;
+    --parchment-2: #2e2214;
+    --ink: #f1e2bd;
+    --ink-soft: #cbb98f;
+    --seal: #e0596a;
+    --seal-dark: #c1465a;
+    --gold: #e8c15c;
+    --gold-light: #f3d685;
+    --moss: #8bb27c;
+    --moss-dark: #6c9660;
+    --paper-line: rgba(241, 226, 189, 0.16);
+    --focus: #8fbaf0;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; background: var(--parchment); color: var(--ink); }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+
+  body {
+    font-family: "Nunito Sans", system-ui, sans-serif;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    line-height: 1.5;
+    background-image:
+      radial-gradient(circle at 10% 8%, var(--parchment-2) 0%, transparent 45%),
+      radial-gradient(circle at 90% 85%, var(--parchment-2) 0%, transparent 40%);
+  }
+
+  h1, h2, h3, .display { font-family: "Baloo 2", system-ui, sans-serif; font-weight: 700; margin: 0; color: var(--ink); }
+
+  .wrap { max-width: 700px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  header.hero-top { text-align: center; padding: 10px 0 6px; }
+  header.hero-top h1 { font-size: clamp(28px, 6vw, 40px); line-height: 1.1; color: var(--seal); }
+  header.hero-top p { max-width: 50ch; margin: 12px auto 0; color: var(--ink-soft); font-size: 16px; }
+
+  .nav-link-top { display: flex; justify-content: center; margin-top: 18px; }
+  .nav-link {
+    display: inline-flex; align-items: center; gap: 8px; background: var(--seal); color: #fff;
+    text-decoration: none; padding: 12px 22px; border-radius: 12px;
+    font-family: "Baloo 2", sans-serif; font-weight: 700; font-size: 16px;
+  }
+
+  section { margin-top: 40px; }
+
+  .panel { background: var(--parchment-2); border: 1px solid var(--paper-line); border-radius: 18px; padding: 24px; }
+  .kicker { display: block; font-size: 14px; color: var(--ink-soft); margin-bottom: 4px; }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    font-weight: 700;
+  }
+
+  .progress-bar {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--paper-line);
+    overflow: hidden;
+    margin-bottom: 22px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--moss);
+    border-radius: 999px;
+    transition: width 0.35s ease;
+    width: 0%;
+  }
+
+  .key-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--parchment);
+    border: 2px solid var(--seal);
+    color: var(--seal);
+    font-family: "Baloo 2", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    margin: 0 auto 16px;
+  }
+
+  .key-tag-wrap { display: flex; justify-content: center; }
+
+  .key-example {
+    text-align: center;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+  .key-example strong { color: var(--ink); font-family: "Baloo 2", sans-serif; letter-spacing: 0.5px; }
+
+  .cipher-display {
+    font-family: "Baloo 2", sans-serif;
+    font-size: clamp(19px, 4.4vw, 24px);
+    letter-spacing: 1px;
+    text-align: center;
+    color: var(--ink);
+    background: var(--parchment);
+    border: 1px dashed var(--paper-line);
+    border-radius: 12px;
+    padding: 18px 14px;
+    margin-bottom: 20px;
+  }
+
+  label.field-label { display: block; font-size: 14px; font-weight: 700; color: var(--ink-soft); margin-bottom: 6px; text-align: center; }
+
+  .answer-input {
+    width: 100%;
+    border-radius: 12px;
+    border: 2px solid var(--paper-line);
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: "Baloo 2", sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+
+  .answer-input:focus { border-color: var(--seal); }
+
+  .check-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 14px;
+  }
+
+  .primary-btn {
+    background: var(--seal); color: #fff; border: none; border-radius: 12px; padding: 12px 28px;
+    font-family: "Baloo 2", sans-serif; font-weight: 700; font-size: 16px; cursor: pointer;
+  }
+
+  .primary-btn.next { background: var(--moss); }
+  .primary-btn:disabled { background: var(--paper-line); color: var(--ink-soft); cursor: not-allowed; }
+
+  .feedback-message {
+    text-align: center;
+    margin-top: 14px;
+    font-weight: 700;
+    min-height: 1.3em;
+  }
+  .feedback-message.correct { color: var(--moss-dark); }
+  .feedback-message.wrong { color: var(--seal-dark); }
+
+  .word-feedback {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .word-chip {
+    font-family: "Baloo 2", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: var(--parchment);
+    border: 2px solid var(--paper-line);
+    color: var(--ink-soft);
+  }
+
+  .word-chip.correct { border-color: var(--moss); color: var(--moss-dark); background: rgba(92, 122, 82, 0.12); }
+  .word-chip.wrong { border-color: var(--seal); color: var(--seal-dark); background: rgba(164, 48, 62, 0.08); }
+
+  .challenge-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+  }
+
+  .link-btn {
+    background: none; border: none; color: var(--ink-soft); text-decoration: underline;
+    font-size: 15px; cursor: pointer; padding: 6px 4px;
+  }
+
+  .hint-box { margin-top: 10px; font-size: 14px; color: var(--ink-soft); text-align: center; min-height: 1.2em; }
+
+  .success-banner {
+    margin-top: 16px; background: var(--moss); color: #fff; border-radius: 12px; padding: 12px 16px;
+    text-align: center; font-weight: 700; display: none;
+  }
+  .success-banner.show { display: block; }
+
+  footer { margin-top: 50px; text-align: center; color: var(--ink-soft); font-size: 14px; padding-top: 18px; border-top: 1px solid var(--paper-line); }
+
+  button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  @media (max-width: 480px) { .panel { padding: 18px; border-radius: 14px; } section { margin-top: 32px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero-top">
+    <h1>Desafio do Mensageiro</h1>
+    <p>Cada mensagem secreta já vem com a chave usada. Descubra, letra por letra, o que cada uma vira e digite a mensagem decifrada no campo abaixo.</p>
+    <div class="nav-link-top">
+      <a class="nav-link" href="cifra-roda.html">Usar a Roda para ajudar</a>
+    </div>
+  </header>
+
+  <section id="desafio">
+    <div class="panel">
+      <span class="kicker">Desafio do Mensageiro</span>
+
+      <div class="progress-row">
+        <span id="progressLabel">Desafio 1 de 50</span>
+        <span id="solvedLabel">0 decifradas</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+      <div class="key-tag-wrap">
+        <span class="key-tag">Chave <span id="keyValue">1</span></span>
+      </div>
+      <p class="key-example">Nessa chave, <strong id="keyExample">A vira B</strong></p>
+
+      <div class="cipher-display" id="cipherDisplay"></div>
+
+      <label class="field-label" for="answerInput">Digite a mensagem decifrada</label>
+      <input class="answer-input" id="answerInput" type="text" autocomplete="off" autocapitalize="characters" placeholder="Escreva sua resposta aqui...">
+
+      <div class="check-row">
+        <button class="primary-btn" id="checkBtn" type="button">Verificar resposta</button>
+      </div>
+
+      <p class="feedback-message" id="feedbackMessage" aria-live="polite"></p>
+      <div class="word-feedback" id="wordFeedback"></div>
+
+      <div class="success-banner" id="successBanner"></div>
+
+      <div class="challenge-actions">
+        <button class="link-btn" id="hintBtn" type="button">Mostrar dica</button>
+        <button class="primary-btn next" id="nextBtn" type="button" disabled>Próximo desafio</button>
+      </div>
+      <p class="hint-box" id="hintBox"></p>
+    </div>
+  </section>
+
+  <footer>
+    Precisa relembrar como cada letra se transforma? Use a Roda para girar o disco na chave indicada.
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var N = 26;
+
+  function stripAccents(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+
+  function shiftChar(ch, k) {
+    var idx = ALPHABET.indexOf(ch);
+    if (idx === -1) return ch;
+    var newIdx = ((idx + k) % N + N) % N;
+    return ALPHABET[newIdx];
+  }
+
+  function shiftText(text, k) {
+    var clean = stripAccents(text).toUpperCase();
+    var out = "";
+    for (var i = 0; i < clean.length; i++) out += shiftChar(clean[i], k);
+    return out;
+  }
+
+  function normalize(text) {
+    return stripAccents(text).toUpperCase().replace(/\s+/g, " ").trim();
+  }
+
+  /* ---------- Banco de 50 frases ---------- */
+  var bank = [
+    { plain: "O GATO DORME NO SOL", hint: "Pense em um bichinho que gosta de cochilar." },
+    { plain: "EU AMO PIZZA DE QUEIJO", hint: "Pense em uma comida redonda e saborosa." },
+    { plain: "O DRAGAO VOA A NOITE", hint: "Pense em uma criatura que solta fogo." },
+    { plain: "MINHA NAVE VAI PARA MARTE", hint: "Pense em uma viagem ao espaço." },
+    { plain: "VAMOS SALVAR O REINO ENCANTADO", hint: "Pense em uma aventura de herois." },
+    { plain: "O TESOURO ESTA DENTRO DA CAVERNA ESCURA", hint: "Pense em piratas procurando um tesouro." },
+    { plain: "A AMIZADE E O MAIOR TESOURO DE TODOS", hint: "Pense em algo que vale mais que ouro." },
+    { plain: "PARABENS VOCE DECIFROU TODOS OS CODIGOS", hint: "Voce esta quase terminando o desafio!" },
+    { plain: "O ROBO ANDA PELA CIDADE", hint: "Pense em uma maquina que anda e pensa." },
+    { plain: "A BORBOLETA POUSA NA FLOR", hint: "Pense em um inseto colorido que voa." },
+    { plain: "O PALHACO FAZ TODOS RIREM", hint: "Pense em alguem que trabalha no circo." },
+    { plain: "OS PIRATAS PROCURAM O MAPA", hint: "Pense em aventureiros dos mares." },
+    { plain: "A PRINCESA MORA NO CASTELO", hint: "Pense em um conto de fadas." },
+    { plain: "O FOGUETE VAI ATE A LUA", hint: "Pense em uma viagem espacial." },
+    { plain: "MEU CACHORRO CORRE NO PARQUE", hint: "Pense em um animal de estimacao fiel." },
+    { plain: "A CHUVA CAI SOBRE A CIDADE", hint: "Pense no tempo em um dia nublado." },
+    { plain: "O PEIXE NADA NO OCEANO AZUL", hint: "Pense em um animal que vive na agua." },
+    { plain: "A BRUXA PREPARA UMA POCAO MAGICA", hint: "Pense em magia e feiticos." },
+    { plain: "O LEAO E O REI DA SELVA", hint: "Pense no maior felino da savana." },
+    { plain: "AS ESTRELAS BRILHAM NO CEU ESCURO", hint: "Pense em uma noite sem nuvens." },
+    { plain: "O PALHACO ANDA DE PERNA DE PAU", hint: "Pense em uma apresentacao de circo." },
+    { plain: "MEU AMIGO GANHOU UMA BICICLETA NOVA", hint: "Pense em um presente de aniversario." },
+    { plain: "A FORMIGA CARREGA UMA FOLHA GRANDE", hint: "Pense em um inseto muito forte." },
+    { plain: "O DINOSSAURO ERA MUITO GRANDE", hint: "Pense em um animal pre-historico." },
+    { plain: "A BALEIA NADA NO MAR PROFUNDO", hint: "Pense no maior animal do oceano." },
+    { plain: "O PALHACO USA UM NARIZ VERMELHO", hint: "Pense em alguem engracado do circo." },
+    { plain: "A FADA TEM ASAS BRILHANTES", hint: "Pense em uma criatura magica pequena." },
+    { plain: "O CAVALO CORRE PELO CAMPO VERDE", hint: "Pense em um animal que se monta." },
+    { plain: "A ARANHA TECE UMA TEIA ENORME", hint: "Pense em um bicho de oito patas." },
+    { plain: "O SOL NASCE TODAS AS MANHAS", hint: "Pense no que ilumina o dia." },
+    { plain: "A LUA APARECE TODAS AS NOITES", hint: "Pense no que ilumina a noite." },
+    { plain: "MEU PROFESSOR CONTA HISTORIAS INCRIVEIS", hint: "Pense em alguem que ensina na escola." },
+    { plain: "A FLORESTA TEM ARVORES ALTAS", hint: "Pense em um lugar cheio de plantas." },
+    { plain: "O URSO DORME DURANTE O INVERNO", hint: "Pense em um animal que hiberna." },
+    { plain: "A ABELHA FAZ MEL DOCE", hint: "Pense em um inseto que faz um doce amarelo." },
+    { plain: "O PASSARO CANTA PELA MANHA", hint: "Pense em um animal que voa e canta." },
+    { plain: "A TARTARUGA ANDA BEM DEVAGAR", hint: "Pense em um animal com casco." },
+    { plain: "O CIRCO CHEGOU NA CIDADE", hint: "Pense em palhacos e malabaristas." },
+    { plain: "A MUSICA DEIXA TODOS FELIZES", hint: "Pense em algo que se ouve e se dança." },
+    { plain: "O FUTEBOL E UM ESPORTE DIVERTIDO", hint: "Pense em um jogo com uma bola." },
+    { plain: "MINHA FAMILIA VIAJOU PARA A PRAIA", hint: "Pense em um lugar com areia e mar." },
+    { plain: "O MAGO FEZ UM TRUQUE INCRIVEL", hint: "Pense em alguem que faz magica." },
+    { plain: "A ESCOLA TEM UM PATIO GRANDE", hint: "Pense no lugar onde voce estuda." },
+    { plain: "O ROBO PISCA UMA LUZ AZUL", hint: "Pense em uma maquina com luzes." },
+    { plain: "A CHAVE ABRE A PORTA SECRETA", hint: "Pense em um objeto que destranca coisas." },
+    { plain: "O ARCO IRIS TEM SETE CORES", hint: "Pense no que aparece depois da chuva." },
+    { plain: "AS CRIANCAS BRINCAM NO PARQUE", hint: "Pense em um lugar com balancos e escorregador." },
+    { plain: "O LOBO UIVA PARA A LUA", hint: "Pense em um animal que uiva a noite." },
+    { plain: "A NEVE CAI NO INVERNO FRIO", hint: "Pense em um dia muito frio e branco." },
+    { plain: "VOCE E UM EXPERT EM CIFRAS", hint: "Voce chegou ate o final, parabens!" }
+  ];
+
+  var challenges = bank.map(function (item, i) {
+    var key = ((i * 7) % 25) + 1;
+    return {
+      plain: normalize(item.plain),
+      key: key,
+      cipher: shiftText(item.plain, key),
+      hint: item.hint
+    };
+  });
+
+  /* Embaralha a ordem de apresentação a cada visita, mantendo o banco intacto */
+  for (var i = challenges.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = challenges[i];
+    challenges[i] = challenges[j];
+    challenges[j] = tmp;
+  }
+
+  var chIndex = 0;
+  var solvedCount = 0;
+  var solvedCurrent = false;
+
+  var progressLabel = document.getElementById("progressLabel");
+  var solvedLabel = document.getElementById("solvedLabel");
+  var progressFill = document.getElementById("progressFill");
+  var keyValueEl = document.getElementById("keyValue");
+  var keyExampleEl = document.getElementById("keyExample");
+  var cipherDisplay = document.getElementById("cipherDisplay");
+  var answerInput = document.getElementById("answerInput");
+  var checkBtn = document.getElementById("checkBtn");
+  var feedbackMessage = document.getElementById("feedbackMessage");
+  var wordFeedback = document.getElementById("wordFeedback");
+  var successBanner = document.getElementById("successBanner");
+  var nextBtn = document.getElementById("nextBtn");
+  var hintBtn = document.getElementById("hintBtn");
+  var hintBox = document.getElementById("hintBox");
+
+  var successMessages = [
+    "Você decifrou a mensagem!",
+    "Isso aí, mensagem decifrada!",
+    "Você é um verdadeiro mensageiro!",
+    "Segredo revelado!"
+  ];
+
+  function loadChallenge(i) {
+    chIndex = i;
+    solvedCurrent = false;
+    var c = challenges[chIndex];
+
+    progressLabel.textContent = "Desafio " + (chIndex + 1) + " de " + challenges.length;
+    solvedLabel.textContent = solvedCount + " decifradas";
+    progressFill.style.width = Math.round((chIndex / challenges.length) * 100) + "%";
+
+    keyValueEl.textContent = c.key;
+    keyExampleEl.textContent = "A vira " + shiftChar("A", c.key) + ", B vira " + shiftChar("B", c.key);
+    cipherDisplay.textContent = c.cipher;
+
+    answerInput.value = "";
+    feedbackMessage.textContent = "";
+    feedbackMessage.className = "feedback-message";
+    wordFeedback.innerHTML = "";
+    hintBox.textContent = "";
+    successBanner.classList.remove("show");
+    nextBtn.disabled = true;
+
+    answerInput.focus();
+  }
+
+  function renderWordFeedback(typedWords, expectedWords) {
+    wordFeedback.innerHTML = "";
+    var maxLen = Math.max(typedWords.length, expectedWords.length);
+    for (var i = 0; i < maxLen; i++) {
+      var chip = document.createElement("span");
+      var word = typedWords[i] || "?";
+      var isCorrect = typedWords[i] && typedWords[i] === expectedWords[i];
+      chip.className = "word-chip " + (isCorrect ? "correct" : "wrong");
+      chip.textContent = word;
+      wordFeedback.appendChild(chip);
+    }
+  }
+
+  function checkAnswer() {
+    var c = challenges[chIndex];
+    var typedNorm = normalize(answerInput.value);
+    var expectedNorm = c.plain;
+
+    var typedWords = typedNorm.split(" ").filter(Boolean);
+    var expectedWords = expectedNorm.split(" ").filter(Boolean);
+
+    var allCorrect = typedNorm === expectedNorm && typedNorm.length > 0;
+
+    if (allCorrect) {
+      feedbackMessage.textContent = "Certinho!";
+      feedbackMessage.className = "feedback-message correct";
+      wordFeedback.innerHTML = "";
+      if (!solvedCurrent) {
+        solvedCurrent = true;
+        solvedCount += 1;
+        solvedLabel.textContent = solvedCount + " decifradas";
+      }
+      var msg = successMessages[chIndex % successMessages.length];
+      successBanner.textContent = msg;
+      successBanner.classList.add("show");
+      nextBtn.disabled = false;
+    } else {
+      feedbackMessage.textContent = "Quase lá! Confira palavra por palavra.";
+      feedbackMessage.className = "feedback-message wrong";
+      successBanner.classList.remove("show");
+      renderWordFeedback(typedWords, expectedWords);
+    }
+  }
+
+  checkBtn.addEventListener("click", checkAnswer);
+  answerInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") checkAnswer();
+  });
+
+  hintBtn.addEventListener("click", function () {
+    hintBox.textContent = challenges[chIndex].hint;
+  });
+
+  nextBtn.addEventListener("click", function () {
+    if (chIndex < challenges.length - 1) loadChallenge(chIndex + 1);
+  });
+
+  loadChallenge(0);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A Roda dos Segredos: Cifra de César</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parchment: #f2e6c9;
+    --parchment-2: #e9d7ac;
+    --ink: #3a2a17;
+    --ink-soft: #6b573c;
+    --seal: #a4303e;
+    --seal-dark: #7d2230;
+    --gold: #c1902b;
+    --gold-light: #e8c15c;
+    --moss: #5c7a52;
+    --moss-dark: #3f5936;
+    --paper-line: rgba(58, 42, 23, 0.14);
+    --focus: #2b5fa8;
+    color-scheme: light;
+  }
+
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --parchment: #241a10;
+      --parchment-2: #2e2214;
+      --ink: #f1e2bd;
+      --ink-soft: #cbb98f;
+      --seal: #e0596a;
+      --seal-dark: #c1465a;
+      --gold: #e8c15c;
+      --gold-light: #f3d685;
+      --moss: #8bb27c;
+      --moss-dark: #6c9660;
+      --paper-line: rgba(241, 226, 189, 0.16);
+      --focus: #8fbaf0;
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --parchment: #241a10;
+    --parchment-2: #2e2214;
+    --ink: #f1e2bd;
+    --ink-soft: #cbb98f;
+    --seal: #e0596a;
+    --seal-dark: #c1465a;
+    --gold: #e8c15c;
+    --gold-light: #f3d685;
+    --moss: #8bb27c;
+    --moss-dark: #6c9660;
+    --paper-line: rgba(241, 226, 189, 0.16);
+    --focus: #8fbaf0;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--parchment);
+    color: var(--ink);
+  }
+
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+
+  body {
+    font-family: "Nunito Sans", system-ui, sans-serif;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    line-height: 1.5;
+    background-image:
+      radial-gradient(circle at 10% 8%, var(--parchment-2) 0%, transparent 45%),
+      radial-gradient(circle at 90% 85%, var(--parchment-2) 0%, transparent 40%);
+  }
+
+  h1, h2, h3, .display {
+    font-family: "Baloo 2", system-ui, sans-serif;
+    font-weight: 700;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  header.hero-top { text-align: center; padding: 10px 0 6px; }
+  header.hero-top h1 { font-size: clamp(28px, 6vw, 44px); line-height: 1.1; color: var(--seal); }
+  header.hero-top p { max-width: 46ch; margin: 12px auto 0; color: var(--ink-soft); font-size: 16px; }
+
+  .nav-link-top {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+  }
+
+  section { margin-top: 44px; }
+
+  .panel {
+    background: var(--parchment-2);
+    border: 1px solid var(--paper-line);
+    border-radius: 18px;
+    padding: 24px;
+  }
+
+  .panel h2 { font-size: clamp(20px, 4vw, 26px); }
+  .kicker { display: block; font-size: 14px; color: var(--ink-soft); margin-bottom: 4px; }
+
+  .wheel-shell { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .wheel-holder { position: relative; width: min(340px, 82vw); }
+  svg#wheel { width: 100%; height: auto; display: block; }
+
+  .ring-letter { font-family: "Nunito Sans", sans-serif; font-weight: 800; }
+  .ring-letter.outer { fill: var(--ink); font-size: 17px; }
+  .ring-letter.inner { fill: var(--seal); font-size: 15px; transition: fill 0.2s ease; }
+
+  .pointer-group { transition: transform 0.45s cubic-bezier(.34,1.4,.64,1); }
+  .pointer-tri { fill: var(--gold); }
+
+  .hub { fill: var(--parchment); stroke: var(--gold); stroke-width: 3; }
+  .hub-label { font-family: "Baloo 2", sans-serif; font-weight: 700; fill: var(--seal); font-size: 30px; }
+
+  .key-control { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .key-row { display: flex; align-items: center; gap: 14px; width: 100%; justify-content: center; }
+
+  .key-btn {
+    width: 46px; height: 46px; border-radius: 50%;
+    border: 2px solid var(--seal); background: var(--parchment); color: var(--seal);
+    font-size: 22px; font-weight: 800; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex: none;
+  }
+  .key-btn:active { transform: scale(0.94); }
+
+  .key-value { font-family: "Baloo 2", sans-serif; font-size: 26px; font-weight: 700; min-width: 110px; text-align: center; }
+  .key-value strong { color: var(--seal); }
+
+  input[type="range"].key-slider { width: 100%; accent-color: var(--seal); }
+
+  .example-line { font-size: 15px; color: var(--ink-soft); text-align: center; }
+  .example-line strong { color: var(--ink); font-family: "Baloo 2", sans-serif; letter-spacing: 1px; }
+
+  .callout {
+    border-left: 5px solid var(--gold);
+    background: var(--parchment-2);
+    border-radius: 4px 14px 14px 4px;
+    padding: 18px 20px;
+  }
+  .callout h3 { font-size: 18px; margin-bottom: 8px; }
+  .callout p { margin: 0; color: var(--ink-soft); }
+  .callout p + p { margin-top: 10px; }
+
+  .mode-toggle { display: flex; gap: 8px; margin-bottom: 18px; }
+  .mode-btn {
+    flex: 1; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--seal);
+    background: transparent; color: var(--seal); font-family: "Baloo 2", sans-serif;
+    font-weight: 600; font-size: 15px; cursor: pointer;
+  }
+  .mode-btn[aria-pressed="true"] { background: var(--seal); color: var(--parchment); }
+
+  label.field-label { display: block; font-size: 14px; font-weight: 700; color: var(--ink-soft); margin-bottom: 6px; }
+
+  textarea, .output-box {
+    width: 100%; border-radius: 12px; border: 2px solid var(--paper-line);
+    background: var(--parchment); color: var(--ink); font-family: "Nunito Sans", sans-serif;
+    font-size: 17px; padding: 12px 14px; resize: vertical; min-height: 68px;
+  }
+  .output-box {
+    font-weight: 800; letter-spacing: 0.5px; color: var(--seal);
+    display: flex; align-items: center; word-break: break-word;
+  }
+
+  .tool-grid { display: flex; flex-direction: column; gap: 16px; margin-top: 14px; }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--seal);
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-family: "Baloo 2", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  footer { margin-top: 50px; text-align: center; color: var(--ink-soft); font-size: 14px; padding-top: 18px; border-top: 1px solid var(--paper-line); }
+
+  button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible {
+    outline: 3px solid var(--focus); outline-offset: 2px;
+  }
+
+  @media (max-width: 480px) { .panel { padding: 18px; border-radius: 14px; } section { margin-top: 34px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero-top">
+    <h1>A Roda dos Segredos</h1>
+    <p>Há mais de dois mil anos, o general romano Júlio César escondia suas mensagens trocando cada letra por outra. Gire a roda, escolha uma chave e descubra como isso funciona.</p>
+    <div class="nav-link-top">
+      <a class="nav-link" id="forwardLink" href="cifra-desafio.html">Ir para o Desafio do Mensageiro</a>
+    </div>
+  </header>
+
+  <section id="hero-wheel">
+    <div class="panel wheel-shell">
+      <div class="wheel-holder">
+        <svg id="wheel" viewBox="0 0 400 400" role="img" aria-label="Roda da cifra de César">
+          <circle cx="200" cy="200" r="188" fill="none" stroke="var(--paper-line)" stroke-width="1"></circle>
+          <circle cx="200" cy="200" r="148" fill="none" stroke="var(--paper-line)" stroke-width="1"></circle>
+          <g id="outerRing"></g>
+          <g id="innerRing"></g>
+          <g class="pointer-group" id="pointerGroup">
+            <polygon class="pointer-tri" points="200,10 190,28 210,28"></polygon>
+          </g>
+          <circle class="hub" cx="200" cy="200" r="42"></circle>
+          <text class="hub-label" id="hubLabel" x="200" y="211" text-anchor="middle">0</text>
+        </svg>
+      </div>
+
+      <div class="key-control">
+        <div class="key-row">
+          <button class="key-btn" id="keyMinus" type="button" aria-label="Diminuir a chave">-</button>
+          <div class="key-value">Chave <strong id="keyDisplay">0</strong></div>
+          <button class="key-btn" id="keyPlus" type="button" aria-label="Aumentar a chave">+</button>
+        </div>
+        <input type="range" class="key-slider" id="keySlider" min="0" max="25" value="0" aria-label="Escolher a chave, de 0 a 25">
+        <p class="example-line">Com essa chave, <strong id="exampleLine">A vira A</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="explicacao">
+    <div class="callout">
+      <h3>Como isso funciona dentro de um computador?</h3>
+      <p>Quando você manda uma mensagem pelo celular, ela também é embaralhada, para que só quem recebe consiga lê-la. É a mesma ideia da roda: uma regra transforma cada letra em outra, e só quem conhece a regra consegue desfazer a troca.</p>
+      <p>A diferença é que um computador usa chaves gigantes, com números enormes, quase impossíveis de adivinhar. A cifra de César é a versão mais simples dessa ideia, a raiz de onde toda essa proteção de dados nasceu.</p>
+    </div>
+  </section>
+
+  <section id="ferramenta">
+    <div class="panel">
+      <span class="kicker">Ferramenta</span>
+      <h2>Escreva seu próprio recado secreto</h2>
+
+      <div class="mode-toggle" role="group" aria-label="Escolher modo">
+        <button class="mode-btn" id="modeEncode" type="button" aria-pressed="true">Codificar</button>
+        <button class="mode-btn" id="modeDecode" type="button" aria-pressed="false">Decodificar</button>
+      </div>
+
+      <div class="tool-grid">
+        <div>
+          <label class="field-label" for="toolInput" id="toolInputLabel">Sua mensagem</label>
+          <textarea id="toolInput" placeholder="Escreva aqui a sua mensagem..."></textarea>
+        </div>
+        <div>
+          <label class="field-label" id="toolOutputLabel">Resultado</label>
+          <div class="output-box" id="toolOutput" aria-live="polite">&nbsp;</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    A Cifra de César foi usada por Júlio César para proteger mensagens militares no Império Romano. Hoje, ideias parecidas protegem senhas e mensagens em qualquer computador.
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var N = 26;
+  var state = { key: 0, mode: "encode" };
+
+  function stripAccents(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+
+  function shiftChar(ch, k) {
+    var idx = ALPHABET.indexOf(ch);
+    if (idx === -1) return ch;
+    var newIdx = ((idx + k) % N + N) % N;
+    return ALPHABET[newIdx];
+  }
+
+  function shiftText(text, k) {
+    var clean = stripAccents(text).toUpperCase();
+    var out = "";
+    for (var i = 0; i < clean.length; i++) out += shiftChar(clean[i], k);
+    return out;
+  }
+
+  var svgNS = "http://www.w3.org/2000/svg";
+  var cx = 200, cy = 200, rOuter = 168, rInner = 128;
+  var outerRing = document.getElementById("outerRing");
+  var innerRing = document.getElementById("innerRing");
+  var innerTextEls = [];
+
+  function slotAngleDeg(i) { return (360 / N) * i - 90; }
+  function placeAt(r, angleDeg) {
+    var rad = angleDeg * Math.PI / 180;
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+  }
+
+  function buildRings() {
+    for (var i = 0; i < N; i++) {
+      var angle = slotAngleDeg(i);
+
+      var pOuter = placeAt(rOuter, angle);
+      var tOuter = document.createElementNS(svgNS, "text");
+      tOuter.setAttribute("x", pOuter.x);
+      tOuter.setAttribute("y", pOuter.y);
+      tOuter.setAttribute("text-anchor", "middle");
+      tOuter.setAttribute("dominant-baseline", "central");
+      tOuter.setAttribute("class", "ring-letter outer");
+      tOuter.textContent = ALPHABET[i];
+      outerRing.appendChild(tOuter);
+
+      var pInner = placeAt(rInner, angle);
+      var tInner = document.createElementNS(svgNS, "text");
+      tInner.setAttribute("x", pInner.x);
+      tInner.setAttribute("y", pInner.y);
+      tInner.setAttribute("text-anchor", "middle");
+      tInner.setAttribute("dominant-baseline", "central");
+      tInner.setAttribute("class", "ring-letter inner");
+      innerRing.appendChild(tInner);
+      innerTextEls.push(tInner);
+    }
+  }
+
+  function updateWheel() {
+    for (var i = 0; i < N; i++) innerTextEls[i].textContent = ALPHABET[(i + state.key) % N];
+    var pointer = document.getElementById("pointerGroup");
+    var deg = (360 / N) * state.key;
+    pointer.setAttribute("transform", "rotate(" + deg + " " + cx + " " + cy + ")");
+    document.getElementById("hubLabel").textContent = state.key;
+  }
+
+  var keyDisplay = document.getElementById("keyDisplay");
+  var keySlider = document.getElementById("keySlider");
+  var exampleLine = document.getElementById("exampleLine");
+
+  function setKey(k) {
+    k = Math.max(0, Math.min(25, k));
+    state.key = k;
+    keyDisplay.textContent = k;
+    keySlider.value = k;
+    updateWheel();
+    exampleLine.textContent = "A vira " + shiftChar("A", k) + ", B vira " + shiftChar("B", k) + ", C vira " + shiftChar("C", k);
+    updateTool();
+  }
+
+  document.getElementById("keyMinus").addEventListener("click", function () { setKey(state.key - 1); });
+  document.getElementById("keyPlus").addEventListener("click", function () { setKey(state.key + 1); });
+  keySlider.addEventListener("input", function () { setKey(parseInt(keySlider.value, 10)); });
+
+  var toolInput = document.getElementById("toolInput");
+  var toolOutput = document.getElementById("toolOutput");
+  var modeEncodeBtn = document.getElementById("modeEncode");
+  var modeDecodeBtn = document.getElementById("modeDecode");
+  var toolInputLabel = document.getElementById("toolInputLabel");
+  var toolOutputLabel = document.getElementById("toolOutputLabel");
+
+  function updateTool() {
+    var text = toolInput.value;
+    if (!text) { toolOutput.innerHTML = "&nbsp;"; return; }
+    var k = state.mode === "encode" ? state.key : (N - state.key) % N;
+    toolOutput.textContent = shiftText(text, k);
+  }
+
+  function setMode(mode) {
+    state.mode = mode;
+    modeEncodeBtn.setAttribute("aria-pressed", mode === "encode" ? "true" : "false");
+    modeDecodeBtn.setAttribute("aria-pressed", mode === "decode" ? "true" : "false");
+    if (mode === "encode") {
+      toolInputLabel.textContent = "Sua mensagem";
+      toolOutputLabel.textContent = "Mensagem codificada";
+      toolInput.placeholder = "Escreva aqui a sua mensagem...";
+    } else {
+      toolInputLabel.textContent = "Mensagem codificada que você recebeu";
+      toolOutputLabel.textContent = "Mensagem original";
+      toolInput.placeholder = "Cole aqui a mensagem cifrada...";
+    }
+    updateTool();
+  }
+
+  modeEncodeBtn.addEventListener("click", function () { setMode("encode"); });
+  modeDecodeBtn.addEventListener("click", function () { setMode("decode"); });
+  toolInput.addEventListener("input", updateTool);
+
+  buildRings();
+  setKey(0);
+  setMode("encode");
+})();
+</script>
+</body>
+</html>
