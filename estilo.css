@@ -47,6 +47,7 @@ body {
 }
 
 img { max-width: 100%; display: block; }
+[hidden] { display: none !important; }
 
 h1, h2, h3 {
   font-family: var(--fonte-titulo);
@@ -113,15 +114,16 @@ a { color: var(--azul-tec); }
   margin: 0 auto;
 }
 .abertura h1 {
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  max-width: 14ch;
-  letter-spacing: -.01em;
+  font-size: clamp(3.2rem, 11vw, 7rem);
+  letter-spacing: -.03em;
+  line-height: 1;
 }
 .abertura p {
-  max-width: 52ch;
-  color: #C9D6E8;
-  font-size: 1.1rem;
-  margin: 1.25rem 0 2rem;
+  color: var(--ciano);
+  font-family: var(--fonte-titulo);
+  font-weight: 600;
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+  margin: .75rem 0 2.25rem;
 }
 .abertura__circuito {
   position: absolute;
@@ -164,27 +166,51 @@ a { color: var(--azul-tec); }
 .busca:focus-within { box-shadow: 0 0 0 4px var(--amarelo); }
 
 /* ---------- Recursos ---------- */
-.recursos, .como-usar {
+.recursos {
   max-width: var(--largura);
   margin: 0 auto;
   padding: 3.5rem 1.5rem;
 }
-.recursos__cabecalho h2, .como-usar h2 { font-size: 1.75rem; }
-.recursos__cabecalho p { color: var(--texto-suave); margin: .35rem 0 0; }
+.recursos__cabecalho h2 { font-size: 1.75rem; }
+.recursos__cabecalho {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem 1rem;
+}
+.ver-todas {
+  font: inherit; font-weight: 600; font-size: .95rem;
+  background: none; border: 0; padding: .25rem 0;
+  color: var(--azul-tec); cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+
+/* Dois segmentos lado a lado: 3 turmas + 4 turmas */
+.trilhas {
+  display: grid;
+  grid-template-columns: 3fr 4fr;
+  gap: 2rem 3rem;
+  margin: 2rem 0 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--linha);
+}
+.segmento__nome {
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+  padding-bottom: .6rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--azul-profundo);
+}
 
 /* Filtro em forma de trilha de circuito: o elemento marcante do site */
 .circuito-filtro {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(6, minmax(96px, 1fr));
-  margin: 2rem 0 2.5rem;
-  overflow-x: auto;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
   padding: .5rem 0 .25rem;
 }
 .circuito-filtro::before {
   content: "";
   position: absolute;
-  left: calc(100% / 12); right: calc(100% / 12);
+  left: calc(100% / (2 * var(--n))); right: calc(100% / (2 * var(--n)));
   top: calc(.5rem + 17px);
   height: 4px;
   background: var(--linha);
@@ -207,7 +233,9 @@ a { color: var(--azul-tec); }
 .no-filtro__nome {
   font-family: var(--fonte-titulo);
   font-weight: 600;
-  font-size: .95rem;
+  font-size: .9rem;
+  line-height: 1.25;
+  max-width: 11ch;
   color: var(--texto);
   text-align: center;
 }
@@ -247,7 +275,7 @@ a { color: var(--azul-tec); }
   border: 1.5px solid var(--linha); background: var(--superficie);
 }
 
-.contagem { color: var(--texto-suave); font-size: .95rem; margin: 1.25rem 0; }
+.contagem { color: var(--texto-suave); font-size: .95rem; margin: 0 0 1.25rem; }
 
 .grade {
   display: grid;
@@ -276,7 +304,9 @@ a { color: var(--azul-tec); }
   color: var(--azul-profundo);
 }
 .selo--novo { background: var(--amarelo); }
-.recurso h3 { font-size: 1.15rem; margin-bottom: .5rem; }
+.recurso h3 { font-size: 1.15rem; margin-bottom: .35rem; }
+.recurso .recurso__turmas { font-size: .85rem; font-weight: 600; color: var(--azul-profundo); margin-bottom: .6rem; }
+.recurso__data { color: var(--texto-suave); margin-top: .9rem; }
 .recurso p { margin: 0 0 1rem; color: var(--texto-suave); font-size: .95rem; }
 .recurso__detalhes {
   display: grid; grid-template-columns: auto 1fr; gap: .2rem .75rem;
@@ -322,24 +352,6 @@ a { color: var(--azul-tec); }
 .vazio h3 { font-size: 1.2rem; }
 .vazio p { color: var(--texto-suave); }
 
-/* ---------- Como usar ---------- */
-.como-usar { border-top: 1px solid var(--linha); }
-.passos {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 2rem; margin-top: 1.75rem;
-  counter-reset: passo;
-}
-.passo { counter-increment: passo; }
-.passo h3 { font-size: 1.1rem; display: flex; align-items: center; gap: .6rem; }
-.passo h3::before {
-  content: counter(passo);
-  display: grid; place-items: center;
-  width: 30px; height: 30px; border-radius: 50%;
-  background: var(--azul-profundo); color: var(--amarelo);
-  font-size: .9rem;
-}
-.passo p { color: var(--texto-suave); margin: .5rem 0 0; }
-
 /* ---------- Rodapé ---------- */
 .rodape {
   background: var(--azul-profundo);
@@ -358,12 +370,14 @@ a { color: var(--azul-tec); }
   .menu { gap: 1rem; }
   .marca__texto { font-size: 1rem; }
   .rodape { flex-direction: column; }
-  .circuito-filtro { grid-template-columns: repeat(6, 104px); }
-  .circuito-filtro::before { left: 52px; right: auto; width: calc(104px * 5); }
+  .trilhas { grid-template-columns: 1fr; }
+  .no-filtro__nome { font-size: .78rem; }
+  .circuito-filtro { column-gap: .35rem; }
+  .no-filtro { padding: 0; }
 }
 
-@media (max-width: 480px) {
-  .menu a[href="#como-usar"] { display: none; }
+@media (max-width: 420px) {
+  .no-filtro__nome { font-size: .72rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

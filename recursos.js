@@ -7,7 +7,11 @@
    CAMPOS
    titulo     (obrigatório) nome do recurso
    descricao  (obrigatório) uma ou duas frases sobre o recurso
-   faixa      (obrigatório) "1-2" | "3-5" | "6-8" | "9-em" | "olimpica"
+   turma      (obrigatório) uma turma ou uma lista de turmas:
+                            Anos Iniciais: "exploradores" | "construtores" | "inovadores"
+                            Anos Finais:   "descobridores" | "criadores" | "inventores" | "olimpica"
+                            ex.: turma: "criadores"
+                            ex.: turma: ["exploradores", "construtores"]
    tipo       (obrigatório) "plano" | "atividade" | "apostila" | "projeto"
                             | "codigo" | "video" | "rubrica" | "apresentacao"
    link       (obrigatório) nome do arquivo enviado (ex.: "sensor-de-luz.pdf") ou endereço externo
@@ -21,63 +25,31 @@
    Atenção às vírgulas entre os blocos e às aspas nos textos.
    ========================================================= */
 
+/* MODELO PARA COPIAR (apague as barras e asteriscos ao usar)
+
+  {
+    titulo: "Nome do recurso",
+    descricao: "Uma ou duas frases explicando o que é e para que serve.",
+    turma: "criadores",
+    tipo: "atividade",
+    link: "nome-do-arquivo.pdf",
+    data: "2026-09-25",
+    duracao: "2 aulas de 50 min",
+    etiquetas: ["Arduino", "Sensores"]
+  },
+
+*/
+
 const RECURSOS = [
   {
-    titulo: "Semáforo com Arduino",
-    descricao: "Projeto guiado em que as equipes montam um semáforo com LEDs e programam a sequência de acendimento, explorando o conceito de algoritmo sequencial.",
-    faixa: "6-8",
-    tipo: "projeto",
-    link: "exemplo.pdf",
-    data: "2026-09-18",
-    duracao: "2 aulas de 50 min",
-    etiquetas: ["Arduino", "LEDs", "Sequência", "Protoboard"],
-    extra: { rotulo: "Ver código", link: "exemplo.pdf" }
-  },
-  {
-    titulo: "Robô de papel: comandos e direções",
-    descricao: "Atividade desplugada em que as crianças conduzem um colega pelo tapete quadriculado usando cartões de setas.",
-    faixa: "1-2",
+    titulo: "A Roda dos Segredos: Cifra de César",
+    descricao: "Atividade interativa em que as crianças giram um disco de letras para descobrir como Júlio César escondia mensagens e escrevem seus próprios recados secretos. Inclui o Desafio do Mensageiro, com 50 mensagens para decifrar.",
+    turma: ["exploradores", "construtores", "inovadores"],
     tipo: "atividade",
-    link: "exemplo.pdf",
-    data: "2026-09-10",
-    duracao: "1 aula",
-    etiquetas: ["Computação desplugada", "Lateralidade", "Algoritmos"]
+    link: "cifra-roda.html",
+    data: "2026-09-22",
+    duracao: "1 a 2 aulas",
+    etiquetas: ["Criptografia", "Cifra de César", "Segurança de dados", "Roma Antiga", "Interativo"],
+    extra: { rotulo: "Desafio do Mensageiro", link: "cifra-desafio.html" }
   },
-  {
-    titulo: "Primeiros passos no Scratch",
-    descricao: "Apostila ilustrada para criar a primeira animação com eventos, movimento e repetição.",
-    faixa: "3-5",
-    tipo: "apostila",
-    link: "exemplo.pdf",
-    data: "2026-08-28",
-    etiquetas: ["Scratch", "Eventos", "Repetição"]
-  },
-  {
-    titulo: "Sensor ultrassônico: medindo distâncias",
-    descricao: "Plano de aula que relaciona física do som, leitura de sensores e estruturas condicionais em um robô que desvia de obstáculos.",
-    faixa: "9-em",
-    tipo: "plano",
-    link: "exemplo.pdf",
-    data: "2026-08-15",
-    duracao: "3 aulas de 50 min",
-    etiquetas: ["Arduino", "Sensores", "Condicionais", "Física"]
-  },
-  {
-    titulo: "Rubrica de avaliação de protótipos",
-    descricao: "Critérios para avaliar funcionamento, documentação, colaboração e apresentação dos projetos de robótica.",
-    faixa: "6-8",
-    tipo: "rubrica",
-    link: "exemplo.pdf",
-    data: "2026-07-30",
-    etiquetas: ["Avaliação", "Projetos"]
-  },
-  {
-    titulo: "Seguidor de linha: ajuste de parâmetros",
-    descricao: "Roteiro de treino para a equipe olímpica calibrar sensores e ajustar a velocidade em pistas com curvas fechadas.",
-    faixa: "olimpica",
-    tipo: "codigo",
-    link: "exemplo.pdf",
-    data: "2026-07-12",
-    etiquetas: ["OBR", "Seguidor de linha", "Calibração"]
-  }
 ];
