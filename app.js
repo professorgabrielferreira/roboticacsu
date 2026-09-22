@@ -73,7 +73,7 @@ function formatarData(data) {
 function combinaBusca(r, termo) {
   if (!termo) return true;
   const alvo = normalizar([r.titulo, r.descricao, TIPOS[r.tipo],
-    ...turmasDe(r).map((t) => t.nome), ...(r.etiquetas || []), ...(r.bncc || [])].join(" "));
+    ...turmasDe(r).map((t) => t.nome), ...(r.etiquetas || []), ...(r.bncc || []), r.autor].join(" "));
   return normalizar(termo).split(/\s+/).every((p) => alvo.includes(p));
 }
 
@@ -130,7 +130,7 @@ function cartao(r) {
         <a class="botao" href="${esc(r.link)}"${ehExterno(r.link)}>Abrir recurso</a>
         ${r.extra ? `<a class="botao botao--secundario" href="${esc(r.extra.link)}"${ehExterno(r.extra.link)}>${esc(r.extra.rotulo)}</a>` : ""}
       </div>
-      <small class="recurso__data">Publicado em ${formatarData(r.data)}</small>
+      <small class="recurso__data">Publicado em ${formatarData(r.data)}${r.autor ? ` por ${esc(r.autor)}` : ""}</small>
     </article>`;
 }
 

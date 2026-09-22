@@ -362,6 +362,8 @@ a { color: var(--azul-tec); }
   text-align: center;
 }
 .rodape p { margin: 0; }
+.rodape__equipe { color: #C9D6E8; margin-left: .75rem; font-size: .85rem; }
+.rodape__equipe:hover { color: var(--branco); }
 .rodape img { border-radius: 7px; }
 
 /* ---------- Responsivo e acessibilidade ---------- */

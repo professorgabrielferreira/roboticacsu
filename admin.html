@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Área da equipe | Robótica</title>
+  <link rel="icon" href="simbolo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilo.css">
+  <style>
+    .painel { max-width: 1180px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+    .painel h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); }
+    .painel__intro { color: var(--texto-suave); max-width: 62ch; margin: .5rem 0 2rem; }
+
+    .caixa {
+      background: var(--superficie);
+      border: 1px solid var(--linha);
+      border-radius: var(--raio);
+      padding: 1.5rem;
+    }
+    .caixa + .caixa { margin-top: 1.5rem; }
+    .caixa h2 { font-size: 1.25rem; margin-bottom: 1rem; }
+
+    .login { max-width: 560px; }
+    .campo { display: flex; flex-direction: column; gap: .35rem; margin-bottom: 1.1rem; }
+    .campo label, .campo legend { font-weight: 600; font-size: .95rem; }
+    .campo small { color: var(--texto-suave); font-size: .82rem; }
+    .campo input[type="text"], .campo input[type="url"], .campo input[type="password"],
+    .campo textarea, .campo select {
+      font: inherit; color: var(--texto);
+      padding: .6rem .75rem;
+      border: 1.5px solid var(--linha);
+      border-radius: 8px;
+      background: var(--branco);
+      width: 100%;
+    }
+    .campo textarea { min-height: 96px; resize: vertical; }
+    .campo input:focus, .campo textarea:focus, .campo select:focus { outline: 3px solid var(--amarelo); outline-offset: 1px; border-color: var(--azul-tec); }
+    .obrigatorio { color: #B42318; }
+    .lembrar { display: flex; align-items: center; gap: .5rem; font-size: .92rem; margin-bottom: 1.25rem; }
+
+    .area { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.5rem; align-items: start; }
+    .usuario { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: 1.5rem; }
+    .usuario p { margin: 0; color: var(--texto-suave); }
+
+    fieldset { border: 0; padding: 0; margin: 0; }
+    .grupo-turmas { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grupo-turmas h3 { font-size: .85rem; color: var(--texto-suave); margin-bottom: .4rem; }
+    .opcao { display: flex; align-items: center; gap: .5rem; font-size: .92rem; padding: .15rem 0; }
+    .opcao .ponto { width: 12px; height: 12px; border-radius: 50%; background: var(--cor); flex-shrink: 0; }
+
+    .bloco-arquivo { border: 1.5px dashed var(--linha); border-radius: 10px; padding: 1rem; margin-bottom: 1.1rem; }
+    .bloco-arquivo h3 { font-size: 1rem; margin-bottom: .25rem; }
+    .bloco-arquivo p { margin: 0 0 .75rem; font-size: .85rem; color: var(--texto-suave); }
+    .alternativa { display: flex; gap: 1rem; margin-bottom: .75rem; font-size: .92rem; }
+    .atual { font-size: .85rem; margin: 0 0 .5rem; }
+    .atual code, .codigo-inline { font-family: var(--fonte-codigo); font-size: .8rem; background: var(--branco); padding: .1rem .35rem; border-radius: 4px; }
+
+    .acoes-form { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin-top: .5rem; }
+    .botao:disabled { opacity: .55; cursor: wait; }
+    .botao--perigo { background: #B42318; }
+    .botao--perigo:hover { background: #8E1B12; }
+
+    .status { margin-top: 1rem; padding: .8rem 1rem; border-radius: 8px; font-size: .92rem; }
+    .status--ok { background: #E7F6EC; color: #14532D; }
+    .status--erro { background: #FDECEA; color: #7A1A12; }
+    .status--info { background: #E8F1FB; color: var(--azul-profundo); }
+
+    .lista-busca { margin-bottom: 1rem; }
+    .lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .6rem; max-height: 70vh; overflow-y: auto; }
+    .item { border: 1px solid var(--linha); border-left: 5px solid var(--cor, var(--azul-tec)); border-radius: 8px; padding: .75rem .9rem; }
+    .item h3 { font-size: .98rem; margin-bottom: .2rem; }
+    .item p { margin: 0 0 .5rem; font-size: .82rem; color: var(--texto-suave); }
+    .item__acoes { display: flex; gap: .5rem; }
+    .item__acoes button { font: inherit; font-size: .85rem; font-weight: 600; background: none; border: 0; padding: .2rem 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+    .item__acoes .editar { color: var(--azul-tec); }
+    .item__acoes .excluir { color: #B42318; }
+
+    .aviso-publico { background: #FFF6DE; border-left: 4px solid var(--amarelo); padding: .75rem 1rem; border-radius: 6px; font-size: .88rem; margin-bottom: 1.25rem; }
+
+    @media (max-width: 860px) {
+      .area { grid-template-columns: 1fr; }
+      .grupo-turmas { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topo">
+    <div class="topo__conteudo">
+      <a class="marca" href="index.html" aria-label="Página inicial">
+        <img src="simbolo.svg" alt="" width="40" height="40">
+        <span class="marca__texto">Robótica</span>
+      </a>
+      <nav class="menu" aria-label="Principal">
+        <a href="index.html">Página inicial</a>
+        <a href="guia-equipe.html">Guia da equipe</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="painel">
+    <h1>Área da equipe</h1>
+    <p class="painel__intro">Espaço para professores publicarem e atualizarem materiais do acervo. Quem ainda não tem acesso deve seguir o <a href="guia-equipe.html">Guia da equipe</a>.</p>
+
+    <!-- ENTRADA -->
+    <section class="caixa login" id="telaLogin">
+      <h2>Entrar</h2>
+      <div class="campo">
+        <label for="token">Chave de acesso do GitHub</label>
+        <input type="password" id="token" autocomplete="off" spellcheck="false" placeholder="ghp_...">
+        <small>A chave fica apenas neste navegador e nunca é enviada para outro lugar além do GitHub.</small>
+      </div>
+      <label class="lembrar"><input type="checkbox" id="lembrar"> Manter conectado neste computador</label>
+      <button type="button" class="botao" id="entrar">Entrar</button>
+      <div id="statusLogin" aria-live="polite"></div>
+    </section>
+
+    <!-- PAINEL -->
+    <section id="telaPainel" hidden>
+      <div class="usuario">
+        <p id="saudacao"></p>
+        <button type="button" class="botao botao--secundario" id="sair">Sair</button>
+      </div>
+
+      <div class="area">
+        <form class="caixa" id="form" novalidate>
+          <h2 id="tituloForm">Novo recurso</h2>
+          <div class="aviso-publico">Tudo o que for publicado aqui fica visível na internet. Não envie fotos, nomes ou dados de estudantes, nem materiais de terceiros sem autorização.</div>
+
+          <div class="campo">
+            <label for="fTitulo">Título <span class="obrigatorio">*</span></label>
+            <input type="text" id="fTitulo" maxlength="90" required>
+          </div>
+
+          <div class="campo">
+            <label for="fDescricao">Descrição <span class="obrigatorio">*</span></label>
+            <textarea id="fDescricao" maxlength="320" required></textarea>
+            <small>Uma ou duas frases: o que é e o que os estudantes fazem.</small>
+          </div>
+
+          <fieldset class="campo">
+            <legend>Turmas <span class="obrigatorio">*</span></legend>
+            <div class="grupo-turmas" id="fTurmas"></div>
+          </fieldset>
+
+          <div class="campo">
+            <label for="fTipo">Tipo <span class="obrigatorio">*</span></label>
+            <select id="fTipo" required></select>
+          </div>
+
+          <div class="campo">
+            <label for="fDuracao">Duração</label>
+            <input type="text" id="fDuracao" placeholder="Ex.: 2 aulas de 50 min">
+          </div>
+
+          <div class="campo">
+            <label for="fEtiquetas">Palavras-chave</label>
+            <input type="text" id="fEtiquetas" placeholder="Ex.: Arduino, sensores, condicionais">
+            <small>Separe por vírgulas. Elas ajudam na busca do site.</small>
+          </div>
+
+          <div class="campo">
+            <label for="fAutor">Professor(a) responsável</label>
+            <input type="text" id="fAutor" placeholder="Ex.: Prof.ª Ana">
+          </div>
+
+          <div class="bloco-arquivo">
+            <h3>Material principal <span class="obrigatorio">*</span></h3>
+            <p>É o que abre no botão "Abrir recurso".</p>
+            <p class="atual" id="atualPrincipal" hidden></p>
+            <div class="alternativa">
+              <label><input type="radio" name="origemPrincipal" value="arquivo" checked> Enviar arquivo</label>
+              <label><input type="radio" name="origemPrincipal" value="link"> Usar link externo</label>
+            </div>
+            <input type="file" id="fArquivoPrincipal">
+            <input type="url" id="fLinkPrincipal" placeholder="https://..." hidden class="campo-link">
+          </div>
+
+          <div class="bloco-arquivo">
+            <h3>Segundo botão (opcional)</h3>
+            <p>Para um complemento: gabarito, código, desafio extra.</p>
+            <p class="atual" id="atualExtra" hidden></p>
+            <div class="campo">
+              <label for="fRotuloExtra">Texto do botão</label>
+              <input type="text" id="fRotuloExtra" maxlength="30" placeholder="Ex.: Ver código">
+            </div>
+            <div class="alternativa">
+              <label><input type="radio" name="origemExtra" value="arquivo" checked> Enviar arquivo</label>
+              <label><input type="radio" name="origemExtra" value="link"> Usar link externo</label>
+            </div>
+            <input type="file" id="fArquivoExtra">
+            <input type="url" id="fLinkExtra" placeholder="https://..." hidden>
+          </div>
+
+          <div class="bloco-arquivo">
+            <h3>Arquivos de apoio (opcional)</h3>
+            <p>Imagens ou páginas que o material principal usa. Ficam na mesma pasta, então os links entre eles continuam funcionando.</p>
+            <input type="file" id="fApoio" multiple>
+          </div>
+
+          <div class="acoes-form">
+            <button type="submit" class="botao" id="publicar">Publicar recurso</button>
+            <button type="button" class="botao botao--secundario" id="cancelar" hidden>Cancelar edição</button>
+          </div>
+          <div id="statusForm" aria-live="polite"></div>
+        </form>
+
+        <aside class="caixa">
+          <h2>Acervo publicado</h2>
+          <div class="campo lista-busca">
+            <label for="filtroLista" class="visualmente-oculto">Filtrar acervo</label>
+            <input type="text" id="filtroLista" placeholder="Filtrar pelo título...">
+          </div>
+          <ul class="lista" id="lista"></ul>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <img src="simbolo.svg" alt="" width="28" height="28">
+    <p>Robótica. Colégio Santa Úrsula.</p>
+  </footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Configuração ---------- */
+  var REPO = { dono: "professorgabrielferreira", nome: "roboticacsu", ramo: "main" };
+  var ARQUIVO_DADOS = "recursos.js";
+  var LIMITE_MB = 25;
+
+  /* Mantenha igual à lista SEGMENTOS do app.js */
+  var SEGMENTOS = [
+    { nome: "Fundamental Anos Iniciais", turmas: [
+      { id: "exploradores", nome: "Exploradores Digitais", cor: "#FFC857" },
+      { id: "construtores", nome: "Construtores Digitais", cor: "#35C4D8" },
+      { id: "inovadores",   nome: "Inovadores Digitais",   cor: "#22A699" } ] },
+    { nome: "Fundamental Anos Finais", turmas: [
+      { id: "descobridores", nome: "Descobridores Digitais", cor: "#1677C8" },
+      { id: "criadores",     nome: "Criadores Digitais",     cor: "#4B63D6" },
+      { id: "inventores",    nome: "Inventores Digitais",    cor: "#7657D9" },
+      { id: "olimpica",      nome: "Equipe Olímpica",        cor: "#F27A38" } ] }
+  ];
+  var TIPOS = { plano: "Plano de aula", atividade: "Atividade", apostila: "Apostila", projeto: "Projeto",
+    codigo: "Código", video: "Vídeo", rubrica: "Rubrica", apresentacao: "Apresentação" };
+  var TURMAS = SEGMENTOS.reduce(function (a, s) { return a.concat(s.turmas); }, []);
+
+  var $ = function (id) { return document.getElementById(id); };
+  var token = null;
+  var catalogo = [];
+  var editando = null; /* chave do recurso em edição */
+
+  /* ---------- Utilidades ---------- */
+  function esc(t) {
+    return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function slug(t) {
+    return String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "recurso";
+  }
+  function nomeSeguro(nome) {
+    var partes = nome.split(".");
+    var ext = partes.length > 1 ? "." + slug(partes.pop()) : "";
+    return slug(partes.join(".")) + ext;
+  }
+  function hoje() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function chaveDe(r) { return r.id || (r.titulo + "|" + r.data); }
+  function textoParaBase64(texto) {
+    var bytes = new TextEncoder().encode(texto), bin = "";
+    for (var i = 0; i < bytes.length; i += 8192) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
+    return btoa(bin);
+  }
+  function base64ParaTexto(b64) {
+    var bin = atob(b64.replace(/\n/g, "")), bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+  function arquivoParaBase64(arquivo) {
+    return new Promise(function (ok, erro) {
+      var leitor = new FileReader();
+      leitor.onload = function () { ok(String(leitor.result).split(",")[1] || ""); };
+      leitor.onerror = function () { erro(new Error("Não foi possível ler o arquivo " + arquivo.name + ".")); };
+      leitor.readAsDataURL(arquivo);
+    });
+  }
+  function status(alvo, tipo, msg) {
+    $(alvo).innerHTML = msg ? '<div class="status status--' + tipo + '">' + msg + "</div>" : "";
+  }
+
+  /* ---------- API do GitHub ---------- */
+  function api(caminho, opcoes) {
+    opcoes = opcoes || {};
+    return fetch("https://api.github.com" + caminho, {
+      method: opcoes.method || "GET",
+      headers: {
+        "Authorization": "Bearer " + token,
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "Content-Type": "application/json"
+      },
+      body: opcoes.body ? JSON.stringify(opcoes.body) : undefined,
+      cache: "no-store"
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (dados) {
+        if (!r.ok) {
+          var e = new Error(dados.message || ("Erro " + r.status));
+          e.status = r.status;
+          throw e;
+        }
+        return dados;
+      });
+    });
+  }
+  var base = "/repos/" + REPO.dono + "/" + REPO.nome;
+
+  /* Lê o catálogo direto do repositório (sempre a versão mais recente) */
+  function lerCatalogo(refCommit) {
+    return api(base + "/contents/" + ARQUIVO_DADOS + "?ref=" + (refCommit || REPO.ramo)).then(function (d) {
+      var fonte = base64ParaTexto(d.content);
+      var inicio = fonte.indexOf("const RECURSOS");
+      var cabecalho = inicio > -1 ? fonte.slice(0, inicio) : "";
+      var lista = new Function(fonte + "\n;return RECURSOS;")();
+      return { cabecalho: cabecalho, lista: Array.isArray(lista) ? lista : [] };
+    });
+  }
+  function montarCatalogo(cabecalho, lista) {
+    return cabecalho + "const RECURSOS = " + JSON.stringify(lista, null, 2) + ";\n";
+  }
+
+  /*
+    Publica todos os arquivos e o catálogo atualizado em UM único commit.
+    alterarLista recebe a lista mais recente do repositório, para não
+    sobrescrever o que outro professor publicou ao mesmo tempo.
+  */
+  function publicar(arquivos, alterarLista, mensagem, tentativa) {
+    tentativa = tentativa || 1;
+    var commitAtual, arvoreBase;
+    return api(base + "/git/ref/heads/" + REPO.ramo)
+      .then(function (ref) { commitAtual = ref.object.sha; return api(base + "/git/commits/" + commitAtual); })
+      .then(function (c) { arvoreBase = c.tree.sha; return lerCatalogo(commitAtual); })
+      .then(function (cat) {
+        var novaLista = alterarLista(cat.lista.slice());
+        var todos = arquivos.concat([{ caminho: ARQUIVO_DADOS, base64: textoParaBase64(montarCatalogo(cat.cabecalho, novaLista)) }]);
+        return Promise.all(todos.map(function (a) {
+          return api(base + "/git/blobs", { method: "POST", body: { content: a.base64, encoding: "base64" } })
+            .then(function (b) { return { path: a.caminho, mode: "100644", type: "blob", sha: b.sha }; });
+        })).then(function (itens) {
+          return api(base + "/git/trees", { method: "POST", body: { base_tree: arvoreBase, tree: itens } });
+        }).then(function (arvore) {
+          return api(base + "/git/commits", { method: "POST", body: { message: mensagem, tree: arvore.sha, parents: [commitAtual] } });
+        }).then(function (novo) {
+          return api(base + "/git/refs/heads/" + REPO.ramo, { method: "PATCH", body: { sha: novo.sha } });
+        }).then(function () { return novaLista; });
+      })
+      .catch(function (e) {
+        /* Outra pessoa publicou no mesmo instante: tenta de novo com a versão atualizada */
+        if (e.status === 422 && tentativa < 3) return publicar(arquivos, alterarLista, mensagem, tentativa + 1);
+        throw e;
+      });
+  }
+
+  /* ---------- Entrada ---------- */
+  function entrar(chave) {
+    token = chave.trim();
+    status("statusLogin", "info", "Verificando acesso...");
+    var usuario;
+    return api("/user")
+      .then(function (u) { usuario = u; return api(base); })
+      .then(function (repo) {
+        if (!repo.permissions || !repo.permissions.push) {
+          throw new Error("Sua conta ainda não tem permissão para publicar neste acervo. Peça ao administrador para adicioná-la como colaboradora e aceite o convite enviado por e-mail.");
+        }
+        var guardar = $("lembrar").checked ? localStorage : sessionStorage;
+        try { guardar.setItem("roboticacsu:token", token); } catch (e) {}
+        $("saudacao").innerHTML = "Conectado como <strong>" + esc(usuario.name || usuario.login) + "</strong>";
+        if (!$("fAutor").value && usuario.name) $("fAutor").dataset.padrao = usuario.name;
+        $("telaLogin").hidden = true;
+        $("telaPainel").hidden = false;
+        status("statusLogin", "", "");
+        return recarregar();
+      })
+      .catch(function (e) {
+        token = null;
+        var msg = e.status === 401
+          ? "Chave inválida ou expirada. Gere uma nova chave seguindo o Guia da equipe."
+          : e.status === 404
+            ? "Acervo não encontrado para esta chave. Confira se a chave tem a permissão public_repo marcada."
+            : esc(e.message);
+        status("statusLogin", "erro", msg);
+      });
+  }
+
+  function sair() {
+    try { localStorage.removeItem("roboticacsu:token"); sessionStorage.removeItem("roboticacsu:token"); } catch (e) {}
+    location.reload();
+  }
+
+  /* ---------- Acervo ---------- */
+  function recarregar() {
+    return lerCatalogo().then(function (cat) { catalogo = cat.lista; desenharLista(); });
+  }
+
+  function desenharLista() {
+    var valorFiltro = $("filtroLista").value.trim();
+    var filtro = valorFiltro ? slug(valorFiltro) : "";
+    var itens = catalogo.filter(function (r) { return !filtro || slug(r.titulo).indexOf(filtro) > -1; });
+    if (!itens.length) {
+      $("lista").innerHTML = '<li class="item"><p>' + (catalogo.length ? "Nenhum recurso com esse título." : "O acervo ainda está vazio. Publique o primeiro recurso pelo formulário.") + "</p></li>";
+      return;
+    }
+    $("lista").innerHTML = itens.map(function (r) {
+      var turmas = [].concat(r.turma || []).map(function (id) {
+        var t = TURMAS.find(function (x) { return x.id === id; }); return t ? t.nome : id;
+      });
+      var cor = (TURMAS.find(function (x) { return x.id === [].concat(r.turma || [])[0]; }) || {}).cor;
+      return '<li class="item" style="--cor:' + (cor || "#1677C8") + '">' +
+        "<h3>" + esc(r.titulo) + "</h3>" +
+        "<p>" + esc(TIPOS[r.tipo] || r.tipo) + " | " + esc(turmas.join(", ")) + "</p>" +
+        '<div class="item__acoes">' +
+          '<button type="button" class="editar" data-chave="' + esc(chaveDe(r)) + '">Editar</button>' +
+          '<button type="button" class="excluir" data-chave="' + esc(chaveDe(r)) + '">Excluir</button>' +
+        "</div></li>";
+    }).join("");
+  }
+
+  /* ---------- Formulário ---------- */
+  function montarCampos() {
+    $("fTurmas").innerHTML = SEGMENTOS.map(function (s) {
+      return "<div><h3>" + s.nome + "</h3>" + s.turmas.map(function (t) {
+        return '<label class="opcao" style="--cor:' + t.cor + '"><input type="checkbox" name="turma" value="' + t.id + '"><span class="ponto" aria-hidden="true"></span>' + t.nome + "</label>";
+      }).join("") + "</div>";
+    }).join("");
+    $("fTipo").innerHTML = '<option value="">Selecione</option>' + Object.keys(TIPOS).map(function (k) {
+      return '<option value="' + k + '">' + TIPOS[k] + "</option>";
+    }).join("");
+
+    ["Principal", "Extra"].forEach(function (qual) {
+      document.querySelectorAll('input[name="origem' + qual + '"]').forEach(function (radio) {
+        radio.addEventListener("change", function () { alternarOrigem(qual); });
+      });
+    });
+  }
+
+  function origem(qual) { return document.querySelector('input[name="origem' + qual + '"]:checked').value; }
+  function alternarOrigem(qual) {
+    var link = origem(qual) === "link";
+    $("fArquivo" + qual).hidden = link;
+    $("fLink" + qual).hidden = !link;
+  }
+  function definirOrigem(qual, valor) {
+    document.querySelector('input[name="origem' + qual + '"][value="' + valor + '"]').checked = true;
+    alternarOrigem(qual);
+  }
+
+  function limparFormulario() {
+    editando = null;
+    $("form").reset();
+    $("fAutor").value = $("fAutor").dataset.padrao || "";
+    $("tituloForm").textContent = "Novo recurso";
+    $("publicar").textContent = "Publicar recurso";
+    $("cancelar").hidden = true;
+    $("atualPrincipal").hidden = true;
+    $("atualExtra").hidden = true;
+    definirOrigem("Principal", "arquivo");
+    definirOrigem("Extra", "arquivo");
+  }
+
+  function editar(chave) {
+    var r = catalogo.find(function (x) { return chaveDe(x) === chave; });
+    if (!r) return;
+    limparFormulario();
+    editando = chave;
+    $("tituloForm").textContent = "Editar recurso";
+    $("publicar").textContent = "Salvar alterações";
+    $("cancelar").hidden = false;
+    $("fTitulo").value = r.titulo || "";
+    $("fDescricao").value = r.descricao || "";
+    $("fTipo").value = r.tipo || "";
+    $("fDuracao").value = r.duracao || "";
+    $("fEtiquetas").value = (r.etiquetas || []).join(", ");
+    $("fAutor").value = r.autor || "";
+    var turmas = [].concat(r.turma || []);
+    document.querySelectorAll('input[name="turma"]').forEach(function (c) { c.checked = turmas.indexOf(c.value) > -1; });
+
+    $("atualPrincipal").hidden = false;
+    $("atualPrincipal").innerHTML = "Atual: <code>" + esc(r.link) + "</code>. Envie um arquivo só se quiser substituir.";
+    if (/^https?:/.test(r.link)) { definirOrigem("Principal", "link"); $("fLinkPrincipal").value = r.link; }
+
+    if (r.extra) {
+      $("fRotuloExtra").value = r.extra.rotulo || "";
+      $("atualExtra").hidden = false;
+      $("atualExtra").innerHTML = "Atual: <code>" + esc(r.extra.link) + "</code>. Apague o texto do botão para removê-lo.";
+      if (/^https?:/.test(r.extra.link)) { definirOrigem("Extra", "link"); $("fLinkExtra").value = r.extra.link; }
+    }
+    $("form").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function excluir(chave) {
+    var r = catalogo.find(function (x) { return chaveDe(x) === chave; });
+    if (!r || !confirm('Retirar "' + r.titulo + '" do acervo? Os arquivos continuam guardados no repositório.')) return;
+    status("statusForm", "info", "Retirando recurso do acervo...");
+    publicar([], function (lista) {
+      return lista.filter(function (x) { return chaveDe(x) !== chave; });
+    }, "Remove recurso: " + r.titulo).then(function (lista) {
+      catalogo = lista; desenharLista();
+      if (editando === chave) limparFormulario();
+      status("statusForm", "ok", "Recurso retirado. O site será atualizado em 1 a 2 minutos.");
+    }).catch(function (e) { status("statusForm", "erro", "Não foi possível excluir: " + esc(e.message)); });
+  }
+
+  function validar() {
+    var erros = [];
+    if (!$("fTitulo").value.trim()) erros.push("o título");
+    if (!$("fDescricao").value.trim()) erros.push("a descrição");
+    if (!document.querySelector('input[name="turma"]:checked')) erros.push("ao menos uma turma");
+    if (!$("fTipo").value) erros.push("o tipo");
+    var temPrincipal = origem("Principal") === "link" ? /^https?:\/\/.+/.test($("fLinkPrincipal").value.trim())
+      : ($("fArquivoPrincipal").files.length > 0 || (editando && !/^https?:/.test(catalogo.find(function (x) { return chaveDe(x) === editando; }).link)));
+    if (!temPrincipal) erros.push(origem("Principal") === "link" ? "um link válido, começando com https://" : "o arquivo do material principal");
+    if ($("fRotuloExtra").value.trim()) {
+      var temExtra = origem("Extra") === "link" ? /^https?:\/\/.+/.test($("fLinkExtra").value.trim())
+        : ($("fArquivoExtra").files.length > 0 || !$("atualExtra").hidden);
+      if (!temExtra) erros.push("o arquivo ou link do segundo botão");
+    }
+    var todos = [].concat(Array.from($("fArquivoPrincipal").files), Array.from($("fArquivoExtra").files), Array.from($("fApoio").files));
+    var grande = todos.find(function (a) { return a.size > LIMITE_MB * 1024 * 1024; });
+    if (grande) erros.push("um arquivo menor que " + LIMITE_MB + " MB (" + esc(grande.name) + " é maior). Para vídeos, use um link do YouTube ou do Drive");
+    return erros;
+  }
+
+  $("form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var erros = validar();
+    if (erros.length) { status("statusForm", "erro", "Falta preencher: " + erros.join("; ") + "."); return; }
+
+    var anterior = editando ? catalogo.find(function (x) { return chaveDe(x) === editando; }) : null;
+    var titulo = $("fTitulo").value.trim();
+    var id = anterior ? (anterior.id || slug(anterior.titulo) + "-" + anterior.data) : slug(titulo) + "-" + hoje();
+    var pasta = "arquivos/" + id + "/";
+    var envios = [];
+
+    function enfileirar(arquivo) {
+      var caminho = pasta + nomeSeguro(arquivo.name);
+      envios.push(arquivoParaBase64(arquivo).then(function (b64) { return { caminho: caminho, base64: b64 }; }));
+      return caminho;
+    }
+
+    var recurso = {
+      id: id,
+      titulo: titulo,
+      descricao: $("fDescricao").value.trim(),
+      turma: Array.from(document.querySelectorAll('input[name="turma"]:checked')).map(function (c) { return c.value; }),
+      tipo: $("fTipo").value,
+      data: anterior ? anterior.data : hoje()
+    };
+    if (recurso.turma.length === 1) recurso.turma = recurso.turma[0];
+
+    recurso.link = origem("Principal") === "link" ? $("fLinkPrincipal").value.trim()
+      : ($("fArquivoPrincipal").files[0] ? enfileirar($("fArquivoPrincipal").files[0]) : anterior.link);
+
+    var rotulo = $("fRotuloExtra").value.trim();
+    if (rotulo) {
+      var linkExtra = origem("Extra") === "link" ? $("fLinkExtra").value.trim()
+        : ($("fArquivoExtra").files[0] ? enfileirar($("fArquivoExtra").files[0]) : anterior && anterior.extra && anterior.extra.link);
+      recurso.extra = { rotulo: rotulo, link: linkExtra };
+    }
+    Array.from($("fApoio").files).forEach(enfileirar);
+
+    if ($("fDuracao").value.trim()) recurso.duracao = $("fDuracao").value.trim();
+    var etiquetas = $("fEtiquetas").value.split(",").map(function (e) { return e.trim(); }).filter(Boolean);
+    if (etiquetas.length) recurso.etiquetas = etiquetas;
+    if ($("fAutor").value.trim()) recurso.autor = $("fAutor").value.trim();
+    if (anterior && anterior.bncc) recurso.bncc = anterior.bncc;
+
+    var chaveAnterior = editando;
+    $("publicar").disabled = true;
+    status("statusForm", "info", "Enviando arquivos e publicando. Não feche esta página.");
+
+    Promise.all(envios).then(function (arquivos) {
+      return publicar(arquivos, function (lista) {
+        if (chaveAnterior) {
+          var i = lista.findIndex(function (x) { return chaveDe(x) === chaveAnterior; });
+          if (i > -1) { lista[i] = recurso; return lista; }
+        }
+        return [recurso].concat(lista);
+      }, (chaveAnterior ? "Atualiza recurso: " : "Adiciona recurso: ") + titulo);
+    }).then(function (lista) {
+      catalogo = lista;
+      desenharLista();
+      limparFormulario();
+      status("statusForm", "ok", "Publicado. O site será atualizado em 1 a 2 minutos. <a href=\"index.html\">Ver página inicial</a>");
+    }).catch(function (e) {
+      status("statusForm", "erro", "Não foi possível publicar: " + esc(e.message) + ". Nada foi alterado no site; tente novamente.");
+    }).then(function () { $("publicar").disabled = false; });
+  });
+
+  /* ---------- Eventos ---------- */
+  $("entrar").addEventListener("click", function () {
+    if (!$("token").value.trim()) { status("statusLogin", "erro", "Cole a sua chave de acesso."); return; }
+    entrar($("token").value);
+  });
+  $("token").addEventListener("keydown", function (e) { if (e.key === "Enter") $("entrar").click(); });
+  $("sair").addEventListener("click", sair);
+  $("cancelar").addEventListener("click", function () { limparFormulario(); status("statusForm", "", ""); });
+  $("filtroLista").addEventListener("input", desenharLista);
+  $("lista").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-chave]");
+    if (!b) return;
+    if (b.classList.contains("editar")) editar(b.dataset.chave); else excluir(b.dataset.chave);
+  });
+
+  montarCampos();
+  var salva = null;
+  try { salva = localStorage.getItem("roboticacsu:token") || sessionStorage.getItem("roboticacsu:token"); } catch (e) {}
+  if (salva) { $("lembrar").checked = !!localStorage.getItem("roboticacsu:token"); entrar(salva); }
+})();
+</script>
+</body>
+</html>

@@ -19,6 +19,8 @@
    duracao    (opcional)    ex.: "2 aulas de 50 min"
    bncc       (opcional)    lista de códigos de habilidades da BNCC
    etiquetas  (opcional)    lista de palavras-chave para a busca
+   autor      (opcional)    professor(a) responsável, aparece no cartão
+   id         (automático)  criado pela Área da equipe; não altere
    extra      (opcional)    { rotulo: "Ver código", link: "..." } segundo botão
 
    Recursos publicados há menos de 30 dias recebem o selo "Novo".

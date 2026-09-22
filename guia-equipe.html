@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Guia da equipe | Robótica</title>
+  <link rel="icon" href="simbolo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilo.css">
+  <style>
+    .guia { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+    .guia h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); }
+    .guia > p { color: var(--texto-suave); }
+    .guia h2 { font-size: 1.35rem; margin: 2.75rem 0 1rem; padding-top: 1.5rem; border-top: 1px solid var(--linha); }
+    .guia ol.etapas { list-style: none; counter-reset: etapa; padding: 0; margin: 0; }
+    .guia ol.etapas > li { counter-increment: etapa; position: relative; padding-left: 3rem; margin-bottom: 1.5rem; }
+    .guia ol.etapas > li::before {
+      content: counter(etapa);
+      position: absolute; left: 0; top: 0;
+      width: 2rem; height: 2rem; border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--azul-profundo); color: var(--amarelo);
+      font-family: var(--fonte-titulo); font-weight: 700; font-size: .9rem;
+    }
+    .guia h3 { font-size: 1.05rem; margin-bottom: .35rem; line-height: 2rem; }
+    .guia li p, .guia li ul { margin: .25rem 0 .5rem; color: var(--texto-suave); }
+    .guia li ul { padding-left: 1.1rem; }
+    .caminho { font-weight: 600; color: var(--texto); }
+    code { font-family: var(--fonte-codigo); font-size: .82rem; background: var(--superficie); border: 1px solid var(--linha); padding: .1rem .35rem; border-radius: 4px; }
+    .nota { background: #FFF6DE; border-left: 4px solid var(--amarelo); padding: .85rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: .92rem; }
+    .nota--alerta { background: #FDECEA; border-color: #B42318; }
+    table { width: 100%; border-collapse: collapse; font-size: .92rem; margin: 1rem 0; }
+    th, td { text-align: left; padding: .6rem .5rem; border-bottom: 1px solid var(--linha); vertical-align: top; }
+    th { font-family: var(--fonte-titulo); font-size: .88rem; }
+    .tabela { overflow-x: auto; }
+    .ir { margin-top: 2rem; }
+  </style>
+</head>
+<body>
+
+  <header class="topo">
+    <div class="topo__conteudo">
+      <a class="marca" href="index.html" aria-label="Página inicial">
+        <img src="simbolo.svg" alt="" width="40" height="40">
+        <span class="marca__texto">Robótica</span>
+      </a>
+      <nav class="menu" aria-label="Principal">
+        <a href="index.html">Página inicial</a>
+        <a href="admin.html">Área da equipe</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="guia">
+    <h1>Guia da equipe</h1>
+    <p>Como obter acesso e publicar materiais no acervo de Robótica. A preparação é feita uma única vez; depois, cada publicação leva poucos minutos.</p>
+
+    <h2>Preparação (uma única vez)</h2>
+    <ol class="etapas">
+      <li>
+        <h3>Crie uma conta no GitHub</h3>
+        <p>Acesse <span class="caminho">github.com</span> e clique em <span class="caminho">Sign up</span>. Use preferencialmente o e-mail institucional. O GitHub é o serviço que guarda e publica o site.</p>
+      </li>
+      <li>
+        <h3>Envie seu nome de usuário ao administrador</h3>
+        <p>O administrador vai convidar sua conta para colaborar com o acervo.</p>
+      </li>
+      <li>
+        <h3>Aceite o convite</h3>
+        <p>Você receberá um e-mail do GitHub. Clique em <span class="caminho">View invitation</span> e depois em <span class="caminho">Accept invitation</span>. O convite expira em 7 dias.</p>
+      </li>
+      <li>
+        <h3>Gere sua chave de acesso</h3>
+        <p>A chave funciona como uma senha exclusiva para o painel, com permissão limitada.</p>
+        <ul>
+          <li>No GitHub, clique na sua foto (canto superior direito) e vá em <span class="caminho">Settings</span>.</li>
+          <li>No fim do menu lateral, clique em <span class="caminho">Developer settings</span>.</li>
+          <li>Vá em <span class="caminho">Personal access tokens &gt; Tokens (classic)</span> e clique em <span class="caminho">Generate new token (classic)</span>.</li>
+          <li>Em <span class="caminho">Note</span>, escreva <code>Acervo Robótica</code>. Em <span class="caminho">Expiration</span>, escolha <span class="caminho">90 days</span>.</li>
+          <li>Marque <strong>somente</strong> a opção <code>public_repo</code>.</li>
+          <li>Clique em <span class="caminho">Generate token</span> e copie a chave, que começa com <code>ghp_</code>. Ela só aparece uma vez.</li>
+        </ul>
+        <div class="nota nota--alerta"><strong>A chave é pessoal.</strong> Não a envie por mensagem nem a salve em documentos compartilhados. Se ela vazar, apague-a em <span class="caminho">Tokens (classic)</span> e gere outra.</div>
+      </li>
+    </ol>
+
+    <h2>Publicar um recurso</h2>
+    <ol class="etapas">
+      <li>
+        <h3>Entre na Área da equipe</h3>
+        <p>Cole a chave e clique em <span class="caminho">Entrar</span>. Em computadores da escola, deixe desmarcado "Manter conectado" e clique em <span class="caminho">Sair</span> ao terminar.</p>
+      </li>
+      <li>
+        <h3>Preencha o formulário</h3>
+        <p>Título, descrição, turmas, tipo e o material principal são obrigatórios. Um mesmo recurso pode servir a mais de uma turma.</p>
+      </li>
+      <li>
+        <h3>Envie o material</h3>
+        <p>Escolha o arquivo ou cole um link externo. Use o segundo botão para complementos, como gabarito ou código.</p>
+      </li>
+      <li>
+        <h3>Publique e aguarde</h3>
+        <p>Clique em <span class="caminho">Publicar recurso</span>. O site é atualizado em 1 a 2 minutos. Se não aparecer, recarregue a página com <code>Ctrl + F5</code>.</p>
+      </li>
+    </ol>
+
+    <h2>Qual formato usar</h2>
+    <div class="tabela">
+      <table>
+        <thead><tr><th>Material</th><th>Recomendação</th></tr></thead>
+        <tbody>
+          <tr><td>Plano de aula, apostila, rubrica</td><td>PDF. Abre em qualquer aparelho e preserva a formatação.</td></tr>
+          <tr><td>Apresentação</td><td>PDF, ou link do Google Apresentações ou Canva com acesso "qualquer pessoa com o link".</td></tr>
+          <tr><td>Vídeo</td><td>Link do YouTube ou do Drive. Arquivos acima de 25 MB não são aceitos.</td></tr>
+          <tr><td>Atividade interativa em HTML</td><td>Envie a página principal no primeiro campo e as demais páginas ou imagens em "Arquivos de apoio". Todas ficam na mesma pasta.</td></tr>
+          <tr><td>Código (Arduino, Python)</td><td>O próprio arquivo (<code>.ino</code>, <code>.py</code>) ou link do Tinkercad ou Wokwi.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Nomes de arquivo são ajustados automaticamente: acentos e espaços são trocados, por exemplo <code>Sensor de Luz.pdf</code> vira <code>sensor-de-luz.pdf</code>.</p>
+
+    <h2>Cuidados antes de publicar</h2>
+    <div class="nota nota--alerta">O acervo é <strong>público</strong>. Qualquer pessoa na internet pode abrir os arquivos.</div>
+    <ul>
+      <li><strong>Dados de estudantes:</strong> não publique fotos, nomes, notas ou produções identificadas, em respeito à Lei Geral de Proteção de Dados (Lei nº 13.709/2018) e ao Estatuto da Criança e do Adolescente.</li>
+      <li><strong>Direitos autorais:</strong> publique materiais próprios, de domínio público ou com licença aberta. Cite a fonte de imagens e textos de terceiros.</li>
+      <li><strong>Revisão:</strong> confira ortografia e links antes de publicar. Um recurso pode ser editado depois pela lista "Acervo publicado".</li>
+    </ul>
+
+    <h2>Editar e excluir</h2>
+    <p>Na lista "Acervo publicado", use <span class="caminho">Editar</span> para mudar textos, turmas ou substituir arquivos. <span class="caminho">Excluir</span> retira o recurso do site; os arquivos continuam guardados no histórico do repositório e podem ser recuperados pelo administrador.</p>
+
+    <h2>Para o administrador</h2>
+    <ol class="etapas">
+      <li>
+        <h3>Adicionar um professor</h3>
+        <p>No repositório, vá em <span class="caminho">Settings &gt; Collaborators &gt; Add people</span>, digite o nome de usuário e envie o convite.</p>
+      </li>
+      <li>
+        <h3>Remover um acesso</h3>
+        <p>Na mesma tela, clique em <span class="caminho">Remove</span> ao lado do nome. A chave daquela pessoa deixa de funcionar no painel imediatamente.</p>
+      </li>
+      <li>
+        <h3>Desfazer uma publicação</h3>
+        <p>Em <span class="caminho">Code &gt; Commits</span>, cada publicação aparece com a mensagem "Adiciona recurso", "Atualiza recurso" ou "Remove recurso", o autor e a data. Qualquer versão anterior pode ser consultada ou restaurada.</p>
+      </li>
+    </ol>
+
+    <p class="ir"><a class="botao" href="admin.html">Ir para a Área da equipe</a></p>
+  </main>
+
+  <footer class="rodape">
+    <img src="simbolo.svg" alt="" width="28" height="28">
+    <p>Robótica. Colégio Santa Úrsula.</p>
+  </footer>
+</body>
+</html>
