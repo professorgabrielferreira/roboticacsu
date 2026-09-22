@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Robótica & Programação | Recursos educacionais</title>
+  <meta name="description" content="Planos de aula, atividades, projetos e códigos de Robótica e Programação, do 1º ano do Ensino Fundamental ao Ensino Médio.">
+  <link rel="icon" href="assets/simbolo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+
+  <a class="pular" href="#recursos">Ir para os recursos</a>
+
+  <header class="topo">
+    <div class="topo__conteudo">
+      <a class="marca" href="./" aria-label="Página inicial">
+        <img src="assets/simbolo.svg" alt="" width="40" height="40">
+        <span class="marca__texto">Robótica <span class="marca__e">&amp;</span> Programação</span>
+      </a>
+      <nav class="menu" aria-label="Principal">
+        <a href="#recursos">Recursos</a>
+        <a href="#como-usar">Como usar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="abertura">
+      <svg class="abertura__circuito" viewBox="0 0 520 320" aria-hidden="true">
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+          <path class="trilha" d="M20 60h140l40 40h120l30-30h150"/>
+          <path class="trilha" d="M60 160h80l30 30h90l40-40h200"/>
+          <path class="trilha" d="M20 260h180l30-30h110l40 40h120"/>
+          <path class="trilha trilha--viva" d="M200 100v50M330 150v80"/>
+        </g>
+        <g>
+          <circle class="no" cx="20" cy="60" r="7"/><circle class="no" cx="320" cy="100" r="7"/>
+          <circle class="no" cx="60" cy="160" r="7"/><circle class="no no--ciano" cx="260" cy="190" r="7"/>
+          <circle class="no" cx="20" cy="260" r="7"/><circle class="no no--ciano" cx="340" cy="230" r="7"/>
+          <circle class="no no--amarelo" cx="500" cy="70" r="9"/>
+          <circle class="no no--amarelo" cx="500" cy="150" r="9"/>
+          <circle class="no no--amarelo" cx="500" cy="270" r="9"/>
+        </g>
+      </svg>
+
+      <div class="abertura__texto">
+        <h1>Construir, programar, investigar e criar.</h1>
+        <p>Planos de aula, atividades, projetos e códigos para quem aprende robótica e programação, do 1º ano do Ensino Fundamental ao Ensino Médio.</p>
+
+        <label class="busca" for="busca">
+          <span class="visualmente-oculto">Buscar recursos</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="busca" type="search" placeholder="Busque por tema, componente ou linguagem: Arduino, Scratch, sensores..." autocomplete="off">
+        </label>
+      </div>
+    </section>
+
+    <section id="recursos" class="recursos" aria-labelledby="titulo-recursos">
+      <div class="recursos__cabecalho">
+        <h2 id="titulo-recursos">Escolha a sua trilha</h2>
+        <p>Cada ponto do circuito corresponde a uma etapa escolar.</p>
+      </div>
+
+      <div class="circuito-filtro" role="radiogroup" aria-label="Filtrar por etapa" id="filtro-faixa"></div>
+
+      <div class="barra">
+        <div class="tipos" role="group" aria-label="Filtrar por tipo de recurso" id="filtro-tipo"></div>
+        <label class="ordem">
+          <span>Ordenar</span>
+          <select id="ordem">
+            <option value="recentes">Mais recentes</option>
+            <option value="titulo">Título (A a Z)</option>
+          </select>
+        </label>
+      </div>
+
+      <p class="contagem" id="contagem" aria-live="polite"></p>
+
+      <div class="grade" id="grade"></div>
+
+      <div class="vazio" id="vazio" hidden>
+        <h3>Nenhum recurso encontrado com esses filtros.</h3>
+        <p>Tente outra palavra na busca ou volte para todas as etapas.</p>
+        <button type="button" class="botao" id="limpar">Limpar filtros</button>
+      </div>
+    </section>
+
+    <section id="como-usar" class="como-usar" aria-labelledby="titulo-como-usar">
+      <h2 id="titulo-como-usar">Como usar os recursos</h2>
+      <div class="passos">
+        <div class="passo">
+          <h3>Escolha a etapa</h3>
+          <p>Clique em um ponto do circuito para ver apenas os materiais pensados para aquela faixa etária.</p>
+        </div>
+        <div class="passo">
+          <h3>Filtre pelo tipo</h3>
+          <p>Planos de aula, atividades, apostilas, projetos, códigos, vídeos ou rubricas de avaliação.</p>
+        </div>
+        <div class="passo">
+          <h3>Abra e compartilhe</h3>
+          <p>O endereço da página guarda os filtros escolhidos, então é possível enviar o link direto para uma turma.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <img src="assets/simbolo.svg" alt="" width="28" height="28">
+    <p>Robótica &amp; Programação. Recursos educacionais abertos para estudantes e educadores.</p>
+  </footer>
+
+  <script src="dados/recursos.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
