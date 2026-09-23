@@ -44,6 +44,24 @@
 
 const RECURSOS = [
   {
+    "id": "manual-de-programacao-do-robo-educacional-2026-09-23",
+    "titulo": "Manual de Programação do Robô Educacional",
+    "descricao": "Manual interativo com etapas de funcionamento do robô, estrutura do código em C++, autoavaliação por metas e um exemplo prático simplificado. Os estudantes revisam os conceitos e marcam o próprio progresso conforme avançam.",
+    "turma": "olimpica",
+    "tipo": "projeto",
+    "data": "2026-09-23",
+    "link": "arquivos/manual-de-programacao-do-robo-educacional-2026-09-23/manual-robo-equipe-olimpica.html",
+    "etiquetas": [
+      "Arduino",
+      "C++",
+      "robótica",
+      "programação",
+      "OBR",
+      "Equipe Olímpica"
+    ],
+    "autor": "Gabriel e Kleython"
+  },
+  {
     "id": "a-roda-dos-segredos-cifra-de-cesar-2026-09-22",
     "titulo": "A Roda dos Segredos: Cifra de César",
     "descricao": "Atividade interativa para utilizar o disco de letras e descobrir como Júlio César escondia mensagens. O recurso permite escrever seu próprio recados secreto. Inclui o Desafio do Mensageiro, com 50 mensagens para decifrar.",

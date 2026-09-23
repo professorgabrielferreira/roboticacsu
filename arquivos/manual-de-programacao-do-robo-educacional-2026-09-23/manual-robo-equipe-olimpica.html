@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual de Programação | Equipe Olímpica | Robótica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!--
+====================================================================
+  CONFIGURAÇÃO NECESSÁRIA ANTES DE PUBLICAR
+====================================================================
+  Esta página usa Firebase (Autenticação com Google + Firestore)
+  para salvar a autoavaliação de cada estudante na conta Google dele,
+  de forma que o progresso seja o mesmo em qualquer computador.
+
+  Antes de subir este arquivo para o site, é necessário:
+  1. Criar um projeto no Firebase (gratuito).
+  2. Ativar o login com Google na aba Authentication.
+  3. Criar um banco Firestore em modo de produção.
+  4. Colar as chaves do seu projeto no objeto firebaseConfig abaixo.
+  5. Definir a regra de segurança do Firestore (explicada junto com
+     o arquivo, em um passo a passo separado).
+
+  Sem esse passo, o botão "Entrar com Google" não vai funcionar.
+====================================================================
+-->
+
+<style>
+  :root {
+    --verde-escuro: #1B4332;
+    --verde-medio: #2D6A4F;
+    --verde-claro: #95D5B2;
+    --verde-fundo: #EEF6F0;
+    --fundo: #FAFBF9;
+    --superficie: #FFFFFF;
+    --texto: #1C2B22;
+    --texto-suave: #52655B;
+    --borda: #DCE6DF;
+    --alerta: #9A6A00;
+    --alerta-fundo: #FBF1DB;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: 'Work Sans', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Lora', serif;
+    color: var(--verde-escuro);
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  a { color: var(--verde-medio); }
+
+  header.topo {
+    background: var(--verde-escuro);
+    color: #F4F8F5;
+    padding: 28px 24px;
+  }
+
+  header.topo .miolo {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  header.topo .trilha {
+    font-size: 0.85rem;
+    color: var(--verde-claro);
+    margin-bottom: 6px;
+  }
+
+  header.topo h1 {
+    color: #FFFFFF;
+    font-size: 1.6rem;
+  }
+
+  header.topo p.subtitulo {
+    margin-top: 6px;
+    color: #CFE6D8;
+    font-size: 0.95rem;
+  }
+
+  nav.abas {
+    position: sticky;
+    top: 0;
+    background: var(--superficie);
+    border-bottom: 1px solid var(--borda);
+    z-index: 10;
+    overflow-x: auto;
+  }
+
+  nav.abas .miolo {
+    max-width: 880px;
+    margin: 0 auto;
+    display: flex;
+    gap: 4px;
+    padding: 0 24px;
+  }
+
+  nav.abas button {
+    all: unset;
+    cursor: pointer;
+    padding: 14px 14px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--texto-suave);
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+  }
+
+  nav.abas button:hover { color: var(--verde-escuro); }
+
+  nav.abas button.ativa {
+    color: var(--verde-escuro);
+    border-bottom-color: var(--verde-medio);
+    font-weight: 600;
+  }
+
+  main {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  section.aba { display: none; }
+  section.aba.ativa { display: block; }
+
+  .intro {
+    background: var(--verde-fundo);
+    border: 1px solid var(--borda);
+    border-radius: 6px;
+    padding: 18px 20px;
+    margin-bottom: 28px;
+    color: var(--texto-suave);
+    font-size: 0.95rem;
+  }
+
+  .etapa, .conceito, .doc-linha {
+    border-top: 1px solid var(--borda);
+    padding: 20px 0;
+  }
+
+  .etapa:first-of-type, .conceito:first-of-type { border-top: none; padding-top: 0; }
+
+  .etapa h3, .conceito h3 {
+    font-size: 1.08rem;
+    margin-bottom: 6px;
+  }
+
+  .etapa p, .conceito p {
+    margin: 0;
+    max-width: 68ch;
+  }
+
+  .destaque {
+    background: var(--verde-fundo);
+    border-left: 3px solid var(--verde-medio);
+    padding: 14px 18px;
+    border-radius: 0 6px 6px 0;
+    margin-top: 20px;
+    font-size: 0.93rem;
+    color: var(--verde-escuro);
+  }
+
+  table.docs {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  table.docs th {
+    text-align: left;
+    font-family: 'Lora', serif;
+    color: var(--verde-escuro);
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--verde-medio);
+  }
+
+  table.docs td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--borda);
+    vertical-align: top;
+  }
+
+  table.docs td.nome {
+    font-family: monospace;
+    color: var(--verde-escuro);
+    white-space: nowrap;
+  }
+
+  pre.codigo {
+    background: #16261D;
+    color: #E4F2E8;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.55;
+  }
+
+  .obs-campo textarea {
+    width: 100%;
+    min-height: 90px;
+    border: 1px solid var(--borda);
+    border-radius: 6px;
+    padding: 12px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.92rem;
+    resize: vertical;
+  }
+
+  /* Aba de autoavaliação */
+
+  .barra-login {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: var(--alerta-fundo);
+    border: 1px solid #E8D6A6;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    font-size: 0.9rem;
+    color: var(--alerta);
+  }
+
+  .barra-login.conectado {
+    background: var(--verde-fundo);
+    border-color: var(--verde-claro);
+    color: var(--verde-escuro);
+  }
+
+  #btn-login {
+    all: unset;
+    cursor: pointer;
+    background: var(--verde-escuro);
+    color: #fff;
+    padding: 9px 16px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  #btn-login:hover { background: var(--verde-medio); }
+
+  #btn-logout {
+    all: unset;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 0.85rem;
+    color: var(--verde-escuro);
+  }
+
+  .progresso-geral {
+    margin-bottom: 28px;
+  }
+
+  .progresso-geral .linha-topo {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--texto-suave);
+    margin-bottom: 6px;
+  }
+
+  .progresso-geral .trilho {
+    height: 10px;
+    background: var(--verde-fundo);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .progresso-geral .preenchido {
+    height: 100%;
+    background: var(--verde-medio);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  .bloco-metas {
+    margin-bottom: 30px;
+  }
+
+  .bloco-metas h3 {
+    font-size: 1.05rem;
+    margin-bottom: 14px;
+  }
+
+  .meta {
+    border-top: 1px solid var(--borda);
+    padding: 16px 0;
+  }
+
+  .meta:first-of-type { border-top: none; }
+
+  .meta p.enunciado {
+    margin: 0 0 10px;
+    font-size: 0.95rem;
+  }
+
+  .status-grupo {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .status-grupo button {
+    all: unset;
+    cursor: pointer;
+    padding: 7px 13px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    border: 1px solid var(--borda);
+    color: var(--texto-suave);
+  }
+
+  .status-grupo button:hover { border-color: var(--verde-medio); }
+
+  .status-grupo button.selecionado[data-status="consegui"] {
+    background: var(--verde-medio);
+    border-color: var(--verde-medio);
+    color: #fff;
+  }
+
+  .status-grupo button.selecionado[data-status="aprendendo"] {
+    background: #F0D48A;
+    border-color: #E0BF5F;
+    color: #4A3B00;
+  }
+
+  .status-grupo button.selecionado[data-status="nao_vi"] {
+    background: #EADCD6;
+    border-color: #D9C3B9;
+    color: #5C3A2A;
+  }
+
+  #status-salvamento {
+    font-size: 0.8rem;
+    color: var(--texto-suave);
+    margin-top: 6px;
+    min-height: 1.2em;
+  }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="miolo">
+    <div class="trilha">Robótica · Colégio Santa Úrsula · Equipe Olímpica</div>
+    <h1>Manual de Programação do Robô Educacional</h1>
+    <p class="subtitulo">Guia de estudo para a Equipe Olímpica, com autoavaliação de progresso</p>
+  </div>
+</header>
+
+<nav class="abas">
+  <div class="miolo">
+    <button class="ativa" data-aba="etapas">1. O que o robô faz</button>
+    <button data-aba="estrutura">2. Estrutura do código</button>
+    <button data-aba="metas">3. Minha autoavaliação</button>
+    <button data-aba="documentacao">4. Documentação técnica</button>
+    <button data-aba="exemplo">5. Exemplo prático</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ABA 1 -->
+  <section class="aba ativa" id="aba-etapas">
+    <div class="intro">
+      Cada etapa abaixo é uma capacidade que o robô precisa demonstrar com confiança,
+      principalmente durante uma prova de robótica, quando não há segunda chance.
+    </div>
+
+    <div class="etapa">
+      <h3>Etapa 1 — Inicializar corretamente todos os seus componentes</h3>
+      <p>O robô deve, ao ser ligado, reconhecer com precisão quais pinos correspondem a
+      entradas (botões) e quais correspondem a saídas (motores), além de garantir que
+      inicia sempre em estado de repouso total, sem movimentos residuais que comprometam
+      a segurança ou a previsibilidade da prova.</p>
+    </div>
+
+    <div class="etapa">
+      <h3>Etapa 2 — Monitorar continuamente o ambiente de entrada</h3>
+      <p>O robô deve ser capaz de permanecer em observação ininterrupta, sem perder nenhum
+      evento de acionamento dos botões, mesmo operando em alta frequência de verificação.</p>
+    </div>
+
+    <div class="etapa">
+      <h3>Etapa 3 — Distinguir um toque real de uma interferência elétrica</h3>
+      <p>O robô deve filtrar ruídos elétricos naturais do contato físico dos botões
+      (bouncing), reconhecendo como válido apenas um acionamento estável e intencional.
+      Essa capacidade é crítica em competições, onde falhas de leitura podem gerar
+      comandos indesejados.</p>
+    </div>
+
+    <div class="etapa">
+      <h3>Etapa 4 — Armazenar uma sequência de comandos com integridade</h3>
+      <p>O robô deve registrar, em ordem exata, cada comando escolhido pelo estudante,
+      respeitando um limite máximo de memória sem sobrescrever ou corromper dados já
+      gravados.</p>
+    </div>
+
+    <div class="etapa">
+      <h3>Etapa 5 — Reproduzir fielmente a sequência programada</h3>
+      <p>O robô deve executar, comando a comando, exatamente a sequência gravada, sem
+      alterações de ordem, omissões ou repetições indevidas, garantindo pausas de
+      estabilização entre movimentos.</p>
+    </div>
+
+    <div class="etapa">
+      <h3>Etapa 6 — Permitir reinício controlado do sistema</h3>
+      <p>O robô deve descartar completamente uma sequência gravada quando solicitado,
+      retornando a um estado limpo, pronto para uma nova programação, sem exigir novo
+      carregamento de firmware.</p>
+    </div>
+  </section>
+
+  <!-- ABA 2 -->
+  <section class="aba" id="aba-estrutura">
+    <div class="intro">
+      Nomenclatura técnica da estrutura de um programa em C++ para Arduino, essencial
+      para dialogar com documentação e provas teóricas de nível olímpico.
+    </div>
+
+    <div class="conceito">
+      <h3>Diretivas de pré-processador (#define)</h3>
+      <p>Antes da compilação, o pré-processador substitui os nomes simbólicos definidos
+      por seus valores numéricos correspondentes. Melhora a legibilidade e evita
+      "números mágicos" espalhados pelo programa.</p>
+    </div>
+
+    <div class="conceito">
+      <h3>Variáveis globais e constantes</h3>
+      <p>Declaradas fora de qualquer função, ficam acessíveis a todo o programa. Inclui um
+      vetor (array) de tamanho fixo, definido por uma constante, usado como estrutura de
+      dados para o armazenamento sequencial dos comandos, e uma variável de índice que
+      controla a posição atual de escrita nesse vetor.</p>
+    </div>
+
+    <div class="conceito">
+      <h3>Função setup()</h3>
+      <p>Função especial, executada uma única vez após a energização do microcontrolador.
+      É o ponto de entrada de inicialização do programa, análogo a uma rotina de boot em
+      sistemas embarcados.</p>
+    </div>
+
+    <div class="conceito">
+      <h3>Função loop()</h3>
+      <p>Função especial de execução cíclica indefinida, chamada repetidamente pelo
+      firmware do Arduino após o setup(). Representa o laço principal (main loop)
+      característico de sistemas reativos em tempo real.</p>
+    </div>
+
+    <div class="conceito">
+      <h3>Funções definidas pelo usuário</h3>
+      <p>O programa é decomposto em funções especializadas, cada uma com uma única
+      responsabilidade (leitura de botão, gravação de comando, execução de sequência,
+      controle de cada motor). Esse princípio é a decomposição funcional, ligada ao
+      conceito de coesão em Engenharia de Software.</p>
+    </div>
+
+    <div class="conceito">
+      <h3>Estrutura condicional (if)</h3>
+      <p>Utilizada para tomar decisões binárias, como verificar se um botão específico foi
+      pressionado antes de executar a ação correspondente.</p>
+    </div>
+
+    <div class="conceito">
+      <h3>Estrutura de seleção múltipla (switch case)</h3>
+      <p>Direciona o fluxo do programa conforme o valor armazenado em cada posição do
+      vetor de comandos, sendo mais eficiente e legível do que uma cadeia extensa de
+      if / else if nesse contexto.</p>
+    </div>
+
+    <div class="conceito">
+      <h3>Estrutura de repetição (for)</h3>
+      <p>Percorre sistematicamente todo o vetor de comandos gravados, elemento a elemento,
+      até o índice final da sequência.</p>
+    </div>
+
+    <div class="conceito">
+      <h3>Estrutura de repetição condicional (while)</h3>
+      <p>Aplicada na rotina de detecção de botão para aguardar, de forma bloqueante, a
+      liberação física do botão antes de prosseguir, evitando múltiplos registros de um
+      único toque.</p>
+    </div>
+
+    <div class="conceito">
+      <h3>Retorno de valores booleanos (bool)</h3>
+      <p>A função responsável por validar o acionamento de um botão retorna um valor
+      lógico (verdadeiro ou falso), permitindo reutilizar essa verificação em múltiplos
+      pontos do programa sem duplicação de lógica.</p>
+    </div>
+
+    <div class="destaque">
+      Essa arquitetura corresponde a uma máquina de estados simplificada (finite state
+      machine), conceito frequentemente cobrado em provas teóricas e essencial para
+      sistemas embarcados mais complexos.
+    </div>
+  </section>
+
+  <!-- ABA 3 -->
+  <section class="aba" id="aba-metas">
+
+    <div id="barra-login" class="barra-login">
+      <span id="texto-login">Entre com sua conta Google para salvar seu progresso e continuar de onde parou em qualquer computador.</span>
+      <button id="btn-login">Entrar com Google</button>
+    </div>
+
+    <div class="progresso-geral">
+      <div class="linha-topo">
+        <span>Seu progresso</span>
+        <span id="progresso-numero">0%</span>
+      </div>
+      <div class="trilho"><div class="preenchido" id="progresso-preenchido"></div></div>
+    </div>
+
+    <div class="intro">
+      Cada meta abaixo é uma coisa que você precisa saber fazer ou explicar sobre o robô.
+      Vá marcando conforme for aprendendo, e sempre que tiver dúvida, volte nas abas
+      anteriores para revisar.
+    </div>
+
+    <div class="bloco-metas">
+      <h3>Bloco 1 — Entendendo como o robô funciona por dentro</h3>
+
+      <div class="meta" data-meta="1_1">
+        <p class="enunciado"><strong>Meta 1.1</strong> — Consigo explicar, sem olhar o
+        código, o que cada parte do programa faz (as configurações do começo, o que roda
+        uma vez, o que roda sem parar, e as receitinhas que o programa usa para cada
+        tarefa).</p>
+        <div class="status-grupo"></div>
+      </div>
+
+      <div class="meta" data-meta="1_2">
+        <p class="enunciado"><strong>Meta 1.2</strong> — Consigo explicar por que o robô
+        não confia em um clique só e espera confirmar se o botão foi realmente
+        apertado.</p>
+        <div class="status-grupo"></div>
+      </div>
+
+      <div class="meta" data-meta="1_3">
+        <p class="enunciado"><strong>Meta 1.3</strong> — Consigo explicar a diferença
+        entre "se acontecer isso, faça aquilo", "repita várias vezes" e "escolha entre
+        várias opções", e dizer onde cada um é usado no robô.</p>
+        <div class="status-grupo"></div>
+      </div>
+    </div>
+
+    <div class="bloco-metas">
+      <h3>Bloco 2 — Pensando como um programador</h3>
+
+      <div class="meta" data-meta="2_1">
+        <p class="enunciado"><strong>Meta 2.1</strong> — Consigo desenhar ou explicar,
+        passo a passo, como o robô guarda na memória cada movimento que o estudante
+        escolhe.</p>
+        <div class="status-grupo"></div>
+      </div>
+
+      <div class="meta" data-meta="2_2">
+        <p class="enunciado"><strong>Meta 2.2</strong> — Consigo desenhar ou explicar,
+        passo a passo, como o robô pega tudo que foi guardado e executa na ordem
+        certa.</p>
+        <div class="status-grupo"></div>
+      </div>
+
+      <div class="meta" data-meta="2_3">
+        <p class="enunciado"><strong>Meta 2.3</strong> — Se o robô fizer algo estranho
+        (por exemplo, repetir o último movimento duas vezes), consigo imaginar em qual
+        parte do programa pode estar o problema.</p>
+        <div class="status-grupo"></div>
+      </div>
+    </div>
+
+    <div class="bloco-metas">
+      <h3>Bloco 3 — Colocando a mão na massa</h3>
+
+      <div class="meta" data-meta="3_1">
+        <p class="enunciado"><strong>Meta 3.1</strong> — Consigo explicar como os sinais
+        enviados aos motores fazem o robô ir para frente, para trás, ou virar para os
+        lados.</p>
+        <div class="status-grupo"></div>
+      </div>
+
+      <div class="meta" data-meta="3_2">
+        <p class="enunciado"><strong>Meta 3.2</strong> — Montei o circuito de exemplo
+        (com o LED) e testei se ele funciona do jeito esperado.</p>
+        <div class="status-grupo"></div>
+      </div>
+
+      <div class="meta" data-meta="3_3">
+        <p class="enunciado"><strong>Meta 3.3</strong> — Consegui alterar o exemplo do
+        LED para fazer algo diferente (por exemplo, dois tipos de piscada) sem quebrar
+        o que já funcionava.</p>
+        <div class="status-grupo"></div>
+      </div>
+    </div>
+
+    <div class="bloco-metas">
+      <h3>Bloco 4 — Preparando ideias para a competição</h3>
+
+      <div class="meta" data-meta="4_1">
+        <p class="enunciado"><strong>Meta 4.1</strong> — Tenho uma ideia de algo para
+        melhorar no robô (um novo movimento, um som, mais espaço de memória) e sei
+        explicar por que essa mudança ajudaria.</p>
+        <div class="status-grupo"></div>
+      </div>
+
+      <div class="meta" data-meta="4_2">
+        <p class="enunciado"><strong>Meta 4.2</strong> — Consigo explicar como
+        autonomia, precisão nos movimentos, repetir sem erro e lidar bem com falhas
+        (assuntos deste material) aparecem nos critérios de provas como a OBR.</p>
+        <div class="status-grupo"></div>
+      </div>
+    </div>
+
+    <div class="bloco-metas obs-campo">
+      <h3>Espaço para anotações</h3>
+      <p style="margin-top:0;color:var(--texto-suave);font-size:0.9rem;">Use este espaço
+      para escrever dúvidas, dificuldades ou ideias para o robô.</p>
+      <textarea id="observacoes" placeholder="Escreva aqui..."></textarea>
+    </div>
+
+    <div id="status-salvamento"></div>
+  </section>
+
+  <!-- ABA 4 -->
+  <section class="aba" id="aba-documentacao">
+    <div class="intro">
+      Cada elemento técnico do sistema, explicado com base na documentação oficial da
+      linguagem Arduino, referência primária para qualquer competidor de robótica.
+    </div>
+
+    <table class="docs">
+      <thead>
+        <tr><th>Elemento</th><th>O que faz</th><th>Documentação</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="nome">pinMode()</td><td>Configura um pino digital como entrada ou saída antes de seu uso</td><td><a href="https://docs.arduino.cc/language-reference/en/functions/digital-io/pinmode/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">digitalRead()</td><td>Lê o estado lógico (HIGH ou LOW) de um pino digital configurado como entrada</td><td><a href="https://docs.arduino.cc/language-reference/en/functions/digital-io/digitalread/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">digitalWrite()</td><td>Define o estado lógico (HIGH ou LOW) de um pino digital configurado como saída</td><td><a href="https://docs.arduino.cc/language-reference/en/functions/digital-io/digitalwrite/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">delay()</td><td>Pausa a execução do programa por um período determinado, em milissegundos</td><td><a href="https://docs.arduino.cc/language-reference/en/functions/time/delay/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">INPUT_PULLUP</td><td>Ativa o resistor de pull-up interno do microcontrolador, evitando resistores externos nos botões</td><td><a href="https://docs.arduino.cc/language-reference/en/functions/digital-io/pinmode/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">Serial.begin()</td><td>Inicializa a comunicação serial entre o Arduino e o computador, definindo a taxa de transmissão</td><td><a href="https://docs.arduino.cc/language-reference/en/functions/communication/serial/begin/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">Serial.print()</td><td>Envia dados via porta serial para depuração e monitoramento em tempo real</td><td><a href="https://docs.arduino.cc/language-reference/en/functions/communication/serial/print/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">byte</td><td>Tipo de dado que armazena um número inteiro sem sinal de 8 bits (0 a 255)</td><td><a href="https://docs.arduino.cc/language-reference/en/variables/data-types/byte/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">bool</td><td>Tipo de dado que armazena apenas verdadeiro (true) ou falso (false)</td><td><a href="https://docs.arduino.cc/language-reference/en/variables/data-types/bool/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">const</td><td>Impede a alteração do valor de uma variável após sua definição</td><td><a href="https://docs.arduino.cc/language-reference/en/variables/variable-scope-qualifiers/const/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">#define</td><td>Diretiva de pré-processador que cria uma substituição textual simbólica</td><td><a href="https://docs.arduino.cc/language-reference/en/structure/further-syntax/define/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">Array</td><td>Armazena múltiplos valores do mesmo tipo em posições sequenciais, acessadas por índice</td><td><a href="https://docs.arduino.cc/language-reference/en/variables/data-types/array/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">void</td><td>Indica que uma função não retorna nenhum valor ao término de sua execução</td><td><a href="https://docs.arduino.cc/language-reference/en/structure/further-syntax/void/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">for</td><td>Estrutura de repetição controlada por contador</td><td><a href="https://docs.arduino.cc/language-reference/en/structure/control-structure/for/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">while</td><td>Estrutura de repetição controlada por condição lógica</td><td><a href="https://docs.arduino.cc/language-reference/en/structure/control-structure/while/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+        <tr><td class="nome">switch case</td><td>Estrutura de seleção múltipla que direciona o fluxo conforme o valor de uma variável</td><td><a href="https://docs.arduino.cc/language-reference/en/structure/control-structure/switchcase/" target="_blank" rel="noopener">docs.arduino.cc</a></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ABA 5 -->
+  <section class="aba" id="aba-exemplo">
+    <div class="intro">
+      Este exemplo não é o robô da Equipe Olímpica, mas um sistema simplificado que
+      reproduz a mesma lógica de programação em uma escala menor. A ideia é compreender,
+      na prática, os conceitos das abas anteriores antes de enfrentar a complexidade
+      total do sistema com motores.
+    </div>
+
+    <p>Aqui, em vez de mover um robô, o programa acende um LED. Em vez de quatro botões
+    de direção, existe apenas um botão de gravação e um botão de execução. A estrutura
+    lógica, porém, é a mesma: ler um evento, armazená-lo em memória, e reproduzi-lo
+    posteriormente.</p>
+
+    <h3 style="margin:28px 0 12px;font-size:1.05rem;">Gravador de Piscadas do LED</h3>
+
+    <pre class="codigo"><code>#define BTN_GRAVAR   2
+#define BTN_TOCAR    3
+#define LED          4
+
+const byte MAX_EVENTOS = 10;
+byte sequencia[MAX_EVENTOS];
+byte indice = 0;
+
+void setup()
+{
+    pinMode(BTN_GRAVAR, INPUT_PULLUP);
+    pinMode(BTN_TOCAR, INPUT_PULLUP);
+    pinMode(LED, OUTPUT);
+    digitalWrite(LED, LOW);
+    Serial.begin(9600);
+}
+
+void loop()
+{
+    if (botaoPressionado(BTN_GRAVAR))
+        gravarEvento();
+
+    if (botaoPressionado(BTN_TOCAR))
+        reproduzirSequencia();
+}
+
+bool botaoPressionado(byte pino)
+{
+    if (digitalRead(pino) == LOW)
+    {
+        delay(25);
+        if (digitalRead(pino) == LOW)
+        {
+            while (digitalRead(pino) == LOW);
+            delay(25);
+            return true;
+        }
+    }
+    return false;
+}
+
+void gravarEvento()
+{
+    if (indice >= MAX_EVENTOS)
+        return;
+
+    sequencia[indice] = 1;
+    indice++;
+    Serial.println("Evento gravado.");
+}
+
+void reproduzirSequencia()
+{
+    Serial.println("Reproduzindo...");
+
+    for (byte i = 0; i < indice; i++)
+    {
+        digitalWrite(LED, HIGH);
+        delay(300);
+        digitalWrite(LED, LOW);
+        delay(300);
+    }
+
+    Serial.println("Fim da sequência.");
+}</code></pre>
+
+    <table class="docs" style="margin-top:28px;">
+      <thead><tr><th>Conceito estudado (robô completo)</th><th>Onde aparece neste exemplo</th></tr></thead>
+      <tbody>
+        <tr><td>Diretivas de pré-processador (#define)</td><td>Definição dos pinos BTN_GRAVAR, BTN_TOCAR e LED</td></tr>
+        <tr><td>Variáveis globais e vetor de armazenamento</td><td>sequencia[] e indice, versão reduzida do vetor programa[] do robô</td></tr>
+        <tr><td>Função setup()</td><td>Configuração dos pinos e inicialização da comunicação serial</td></tr>
+        <tr><td>Função loop()</td><td>Verificação contínua dos dois botões</td></tr>
+        <tr><td>Função booleana com antirrepique</td><td>botaoPressionado(), idêntica em lógica à utilizada no robô</td></tr>
+        <tr><td>Estrutura for</td><td>Percorre a sequência gravada durante a reprodução, assim como executarPrograma() no robô</td></tr>
+      </tbody>
+    </table>
+
+    <div class="destaque">
+      Sugestão de atividade: modifique este exemplo para gravar dois tipos de evento
+      (por exemplo, piscada curta e piscada longa), aproximando ainda mais este
+      exercício do sistema do robô, que grava quatro comandos distintos.
+    </div>
+  </section>
+
+</main>
+
+<!-- Firebase (Autenticação com Google + Firestore) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
+<script>
+// ================== NAVEGAÇÃO ENTRE ABAS ==================
+document.querySelectorAll('nav.abas button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav.abas button').forEach(b => b.classList.remove('ativa'));
+    document.querySelectorAll('section.aba').forEach(s => s.classList.remove('ativa'));
+    btn.classList.add('ativa');
+    document.getElementById('aba-' + btn.dataset.aba).classList.add('ativa');
+  });
+});
+
+// ================== CONFIGURAÇÃO DO FIREBASE ==================
+// Substitua pelos dados do SEU projeto Firebase (ver instruções no topo do arquivo)
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_PROJETO.firebaseapp.com",
+  projectId: "SEU_PROJETO",
+  storageBucket: "SEU_PROJETO.appspot.com",
+  messagingSenderId: "SEU_ID",
+  appId: "SEU_APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ================== MONTAGEM DOS BOTÕES DE STATUS ==================
+const OPCOES = [
+  { valor: 'consegui', rotulo: 'Consegui' },
+  { valor: 'aprendendo', rotulo: 'Ainda estou aprendendo' },
+  { valor: 'nao_vi', rotulo: 'Ainda não vi isso' }
+];
+
+const estado = {}; // { "1_1": "consegui", ... }
+
+document.querySelectorAll('.meta').forEach(metaEl => {
+  const chave = metaEl.dataset.meta;
+  const grupo = metaEl.querySelector('.status-grupo');
+
+  OPCOES.forEach(op => {
+    const b = document.createElement('button');
+    b.textContent = op.rotulo;
+    b.dataset.status = op.valor;
+    b.addEventListener('click', () => {
+      estado[chave] = op.valor;
+      grupo.querySelectorAll('button').forEach(x => x.classList.remove('selecionado'));
+      b.classList.add('selecionado');
+      atualizarProgresso();
+      salvar();
+    });
+    grupo.appendChild(b);
+  });
+});
+
+const observacoesEl = document.getElementById('observacoes');
+observacoesEl.addEventListener('input', () => salvar());
+
+// ================== PROGRESSO ==================
+function atualizarProgresso() {
+  const total = document.querySelectorAll('.meta').length;
+  let pontos = 0;
+  Object.values(estado).forEach(v => {
+    if (v === 'consegui') pontos += 1;
+    if (v === 'aprendendo') pontos += 0.5;
+  });
+  const percentual = Math.round((pontos / total) * 100);
+  document.getElementById('progresso-preenchido').style.width = percentual + '%';
+  document.getElementById('progresso-numero').textContent = percentual + '%';
+}
+
+// ================== SALVAMENTO (com debounce) ==================
+let temporizador = null;
+const statusSalvamento = document.getElementById('status-salvamento');
+
+function salvar() {
+  const usuario = auth.currentUser;
+  if (!usuario) return; // sem login, o progresso fica só nesta sessão do navegador
+
+  clearTimeout(temporizador);
+  statusSalvamento.textContent = 'Salvando...';
+
+  temporizador = setTimeout(() => {
+    db.collection('autoavaliacoes').doc(usuario.uid).set({
+      nome: usuario.displayName,
+      metas: estado,
+      observacoes: observacoesEl.value,
+      atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true })
+    .then(() => { statusSalvamento.textContent = 'Progresso salvo na sua conta Google.'; })
+    .catch(() => { statusSalvamento.textContent = 'Não foi possível salvar agora. Verifique sua internet.'; });
+  }, 700);
+}
+
+function carregarDados(uid) {
+  db.collection('autoavaliacoes').doc(uid).get().then(doc => {
+    if (!doc.exists) return;
+    const dados = doc.data();
+
+    if (dados.metas) {
+      Object.entries(dados.metas).forEach(([chave, valor]) => {
+        estado[chave] = valor;
+        const metaEl = document.querySelector('.meta[data-meta="' + chave + '"]');
+        if (!metaEl) return;
+        metaEl.querySelectorAll('.status-grupo button').forEach(b => {
+          b.classList.toggle('selecionado', b.dataset.status === valor);
+        });
+      });
+      atualizarProgresso();
+    }
+
+    if (dados.observacoes) observacoesEl.value = dados.observacoes;
+  });
+}
+
+// ================== LOGIN COM GOOGLE ==================
+const barraLogin = document.getElementById('barra-login');
+const textoLogin = document.getElementById('texto-login');
+const btnLogin = document.getElementById('btn-login');
+
+btnLogin.addEventListener('click', () => {
+  const provedor = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provedor).catch(() => {
+    statusSalvamento.textContent = 'Não foi possível entrar com o Google. Tente novamente.';
+  });
+});
+
+auth.onAuthStateChanged(usuario => {
+  if (usuario) {
+    barraLogin.classList.add('conectado');
+    textoLogin.textContent = 'Conectado como ' + usuario.displayName + '. Seu progresso está sendo salvo automaticamente.';
+    btnLogin.textContent = 'Sair';
+    btnLogin.onclick = () => auth.signOut();
+    carregarDados(usuario.uid);
+  } else {
+    barraLogin.classList.remove('conectado');
+    textoLogin.textContent = 'Entre com sua conta Google para salvar seu progresso e continuar de onde parou em qualquer computador.';
+    btnLogin.textContent = 'Entrar com Google';
+    btnLogin.onclick = () => auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  }
+});
+</script>
+
+</body>
+</html>
