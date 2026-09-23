@@ -22,7 +22,7 @@
       position: absolute; left: 0; top: 0;
       width: 2rem; height: 2rem; border-radius: 50%;
       display: grid; place-items: center;
-      background: var(--azul-profundo); color: var(--amarelo);
+      background: var(--verde-csu); color: var(--branco);
       font-family: var(--fonte-titulo); font-weight: 700; font-size: .9rem;
     }
     .guia h3 { font-size: 1.05rem; margin-bottom: .35rem; line-height: 2rem; }
@@ -30,7 +30,7 @@
     .guia li ul { padding-left: 1.1rem; }
     .caminho { font-weight: 600; color: var(--texto); }
     code { font-family: var(--fonte-codigo); font-size: .82rem; background: var(--superficie); border: 1px solid var(--linha); padding: .1rem .35rem; border-radius: 4px; }
-    .nota { background: #FFF6DE; border-left: 4px solid var(--amarelo); padding: .85rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: .92rem; }
+    .nota { background: #E6F2F6; border-left: 4px solid var(--azul); padding: .85rem 1rem; border-radius: 6px; margin: 1rem 0; font-size: .92rem; }
     .nota--alerta { background: #FDECEA; border-color: #B42318; }
     table { width: 100%; border-collapse: collapse; font-size: .92rem; margin: 1rem 0; }
     th, td { text-align: left; padding: .6rem .5rem; border-bottom: 1px solid var(--linha); vertical-align: top; }
@@ -44,7 +44,8 @@
   <header class="topo">
     <div class="topo__conteudo">
       <a class="marca" href="index.html" aria-label="Página inicial">
-        <img src="simbolo.svg" alt="" width="40" height="40">
+        <img class="marca__logo" src="logo-csu-branco.png" alt="Colégio Santa Úrsula" width="94" height="44">
+        <span class="marca__divisor" aria-hidden="true"></span>
         <span class="marca__texto">Robótica</span>
       </a>
       <nav class="menu" aria-label="Principal">
@@ -153,8 +154,8 @@
   </main>
 
   <footer class="rodape">
-    <img src="simbolo.svg" alt="" width="28" height="28">
-    <p>Robótica. Colégio Santa Úrsula.</p>
+    <img class="rodape__logo" src="logo-csu-branco.png" alt="Colégio Santa Úrsula" width="85" height="40">
+    <p>Robótica</p>
   </footer>
 </body>
 </html>

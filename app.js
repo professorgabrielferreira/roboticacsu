@@ -8,18 +8,18 @@ const SEGMENTOS = [
   {
     nome: "Fundamental Anos Iniciais",
     turmas: [
-      { id: "exploradores", nome: "Exploradores Digitais", cor: "#FFC857" },
-      { id: "construtores", nome: "Construtores Digitais", cor: "#35C4D8" },
-      { id: "inovadores",   nome: "Inovadores Digitais",   cor: "#22A699" }
+      { id: "exploradores", nome: "Exploradores Digitais", cor: "#5FB38A" },
+      { id: "construtores", nome: "Construtores Digitais", cor: "#1E8A5A" },
+      { id: "inovadores",   nome: "Inovadores Digitais",   cor: "#005835" }
     ]
   },
   {
     nome: "Fundamental Anos Finais",
     turmas: [
-      { id: "descobridores", nome: "Descobridores Digitais", cor: "#1677C8" },
-      { id: "criadores",     nome: "Criadores Digitais",     cor: "#4B63D6" },
-      { id: "inventores",    nome: "Inventores Digitais",    cor: "#7657D9" },
-      { id: "olimpica",      nome: "Equipe Olímpica",        cor: "#F27A38" }
+      { id: "descobridores", nome: "Descobridores Digitais", cor: "#4FA8C7" },
+      { id: "criadores",     nome: "Criadores Digitais",     cor: "#017799" },
+      { id: "inventores",    nome: "Inventores Digitais",    cor: "#06376b" },
+      { id: "olimpica",      nome: "Equipe Olímpica",        cor: "#002e14" }
     ]
   }
 ];
@@ -109,7 +109,7 @@ function desenharTurmas() {
 function cartao(r) {
   const turmas = turmasDe(r);
   /* A cor do cartão acompanha a turma selecionada; sem seleção, usa a primeira turma do recurso */
-  const cor = (turmas.find((t) => t.id === estado.turma) || turmas[0])?.cor || "#1677C8";
+  const cor = (turmas.find((t) => t.id === estado.turma) || turmas[0])?.cor || "#4FA8C7";
   const detalhes = [
     r.duracao && `<dt>Duração</dt><dd>${esc(r.duracao)}</dd>`,
     r.bncc?.length && `<dt>BNCC</dt><dd class="codigo">${r.bncc.map(esc).join(", ")}</dd>`

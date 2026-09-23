@@ -38,7 +38,7 @@
       width: 100%;
     }
     .campo textarea { min-height: 96px; resize: vertical; }
-    .campo input:focus, .campo textarea:focus, .campo select:focus { outline: 3px solid var(--amarelo); outline-offset: 1px; border-color: var(--azul-tec); }
+    .campo input:focus, .campo textarea:focus, .campo select:focus { outline: 3px solid var(--azul); outline-offset: 1px; border-color: var(--verde-csu); }
     .obrigatorio { color: #B42318; }
     .lembrar { display: flex; align-items: center; gap: .5rem; font-size: .92rem; margin-bottom: 1.25rem; }
 
@@ -67,19 +67,19 @@
     .status { margin-top: 1rem; padding: .8rem 1rem; border-radius: 8px; font-size: .92rem; }
     .status--ok { background: #E7F6EC; color: #14532D; }
     .status--erro { background: #FDECEA; color: #7A1A12; }
-    .status--info { background: #E8F1FB; color: var(--azul-profundo); }
+    .status--info { background: #E6F2F6; color: var(--azul-escuro); }
 
     .lista-busca { margin-bottom: 1rem; }
     .lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .6rem; max-height: 70vh; overflow-y: auto; }
-    .item { border: 1px solid var(--linha); border-left: 5px solid var(--cor, var(--azul-tec)); border-radius: 8px; padding: .75rem .9rem; }
+    .item { border: 1px solid var(--linha); border-left: 5px solid var(--cor, var(--verde-csu)); border-radius: 8px; padding: .75rem .9rem; }
     .item h3 { font-size: .98rem; margin-bottom: .2rem; }
     .item p { margin: 0 0 .5rem; font-size: .82rem; color: var(--texto-suave); }
     .item__acoes { display: flex; gap: .5rem; }
     .item__acoes button { font: inherit; font-size: .85rem; font-weight: 600; background: none; border: 0; padding: .2rem 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
-    .item__acoes .editar { color: var(--azul-tec); }
+    .item__acoes .editar { color: var(--verde-csu); }
     .item__acoes .excluir { color: #B42318; }
 
-    .aviso-publico { background: #FFF6DE; border-left: 4px solid var(--amarelo); padding: .75rem 1rem; border-radius: 6px; font-size: .88rem; margin-bottom: 1.25rem; }
+    .aviso-publico { background: #E6F2F6; border-left: 4px solid var(--azul); padding: .75rem 1rem; border-radius: 6px; font-size: .88rem; margin-bottom: 1.25rem; }
 
     @media (max-width: 860px) {
       .area { grid-template-columns: 1fr; }
@@ -92,7 +92,8 @@
   <header class="topo">
     <div class="topo__conteudo">
       <a class="marca" href="index.html" aria-label="Página inicial">
-        <img src="simbolo.svg" alt="" width="40" height="40">
+        <img class="marca__logo" src="logo-csu-branco.png" alt="Colégio Santa Úrsula" width="94" height="44">
+        <span class="marca__divisor" aria-hidden="true"></span>
         <span class="marca__texto">Robótica</span>
       </a>
       <nav class="menu" aria-label="Principal">
@@ -222,8 +223,8 @@
   </main>
 
   <footer class="rodape">
-    <img src="simbolo.svg" alt="" width="28" height="28">
-    <p>Robótica. Colégio Santa Úrsula.</p>
+    <img class="rodape__logo" src="logo-csu-branco.png" alt="Colégio Santa Úrsula" width="85" height="40">
+    <p>Robótica</p>
   </footer>
 
 <script>
@@ -238,14 +239,14 @@
   /* Mantenha igual à lista SEGMENTOS do app.js */
   var SEGMENTOS = [
     { nome: "Fundamental Anos Iniciais", turmas: [
-      { id: "exploradores", nome: "Exploradores Digitais", cor: "#FFC857" },
-      { id: "construtores", nome: "Construtores Digitais", cor: "#35C4D8" },
-      { id: "inovadores",   nome: "Inovadores Digitais",   cor: "#22A699" } ] },
+      { id: "exploradores", nome: "Exploradores Digitais", cor: "#5FB38A" },
+      { id: "construtores", nome: "Construtores Digitais", cor: "#1E8A5A" },
+      { id: "inovadores",   nome: "Inovadores Digitais",   cor: "#005835" } ] },
     { nome: "Fundamental Anos Finais", turmas: [
-      { id: "descobridores", nome: "Descobridores Digitais", cor: "#1677C8" },
-      { id: "criadores",     nome: "Criadores Digitais",     cor: "#4B63D6" },
-      { id: "inventores",    nome: "Inventores Digitais",    cor: "#7657D9" },
-      { id: "olimpica",      nome: "Equipe Olímpica",        cor: "#F27A38" } ] }
+      { id: "descobridores", nome: "Descobridores Digitais", cor: "#4FA8C7" },
+      { id: "criadores",     nome: "Criadores Digitais",     cor: "#017799" },
+      { id: "inventores",    nome: "Inventores Digitais",    cor: "#06376b" },
+      { id: "olimpica",      nome: "Equipe Olímpica",        cor: "#002e14" } ] }
   ];
   var TIPOS = { plano: "Plano de aula", atividade: "Atividade", apostila: "Apostila", projeto: "Projeto",
     codigo: "Código", video: "Vídeo", rubrica: "Rubrica", apresentacao: "Apresentação" };
@@ -424,7 +425,7 @@
         var t = TURMAS.find(function (x) { return x.id === id; }); return t ? t.nome : id;
       });
       var cor = (TURMAS.find(function (x) { return x.id === [].concat(r.turma || [])[0]; }) || {}).cor;
-      return '<li class="item" style="--cor:' + (cor || "#1677C8") + '">' +
+      return '<li class="item" style="--cor:' + (cor || "#4FA8C7") + '">' +
         "<h3>" + esc(r.titulo) + "</h3>" +
         "<p>" + esc(TIPOS[r.tipo] || r.tipo) + " | " + esc(turmas.join(", ")) + "</p>" +
         '<div class="item__acoes">' +
