@@ -8,30 +8,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-<!--
-====================================================================
-  CONFIGURAÇÃO NECESSÁRIA ANTES DE PUBLICAR
-====================================================================
-  Esta página usa Firebase (Autenticação com Google + Firestore)
-  para salvar a autoavaliação de cada estudante na conta Google dele,
-  de forma que o progresso seja o mesmo em qualquer computador.
-
-  Antes de subir este arquivo para o site, é necessário:
-  1. Criar um projeto no Firebase (gratuito).
-  2. Ativar o login com Google na aba Authentication.
-  3. Criar um banco Firestore em modo de produção.
-  4. Colar as chaves do seu projeto no objeto firebaseConfig abaixo.
-  5. Definir a regra de segurança do Firestore (explicada junto com
-     o arquivo, em um passo a passo separado).
-
-  Sem esse passo, o botão "Entrar com Google" não vai funcionar.
-====================================================================
--->
 
 <style>
   :root {
-    --verde-escuro: #1B4332;
-    --verde-medio: #2D6A4F;
+    --verde-escuro: #002e14;
+    --verde-medio: #005835;
     --verde-claro: #95D5B2;
     --verde-fundo: #EEF6F0;
     --fundo: #FAFBF9;
@@ -244,18 +225,6 @@
     color: var(--verde-escuro);
   }
 
-  #btn-login {
-    all: unset;
-    cursor: pointer;
-    background: var(--verde-escuro);
-    color: #fff;
-    padding: 9px 16px;
-    border-radius: 5px;
-    font-size: 0.85rem;
-    font-weight: 500;
-  }
-
-  #btn-login:hover { background: var(--verde-medio); }
 
   #btn-logout {
     all: unset;
@@ -348,6 +317,20 @@
     color: #5C3A2A;
   }
 
+  .voltar-inicio {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #F4F8F5; text-decoration: none; font-size: 0.88rem; font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, .35); border-radius: 5px;
+    padding: 6px 12px; margin-bottom: 18px;
+  }
+  .voltar-inicio:hover { background: rgba(255, 255, 255, .1); }
+  .rodape-metas { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+  #apagar-progresso {
+    background: none; border: none; padding: 4px 0; cursor: pointer;
+    font: inherit; font-size: 0.85rem; font-weight: 600;
+    color: #8E1B12; text-decoration: underline;
+  }
+
   #status-salvamento {
     font-size: 0.8rem;
     color: var(--texto-suave);
@@ -360,6 +343,7 @@
 
 <header class="topo">
   <div class="miolo">
+    <a class="voltar-inicio" href="index.html"><span aria-hidden="true">&#8592;</span> Voltar para a página inicial</a>
     <div class="trilha">Robótica · Colégio Santa Úrsula · Equipe Olímpica</div>
     <h1>Manual de Programação do Robô Educacional</h1>
     <p class="subtitulo">Guia de estudo para a Equipe Olímpica, com autoavaliação de progresso</p>
@@ -386,7 +370,7 @@
     </div>
 
     <div class="etapa">
-      <h3>Etapa 1 — Inicializar corretamente todos os seus componentes</h3>
+      <h3>Etapa 1: Inicializar corretamente todos os seus componentes</h3>
       <p>O robô deve, ao ser ligado, reconhecer com precisão quais pinos correspondem a
       entradas (botões) e quais correspondem a saídas (motores), além de garantir que
       inicia sempre em estado de repouso total, sem movimentos residuais que comprometam
@@ -394,13 +378,13 @@
     </div>
 
     <div class="etapa">
-      <h3>Etapa 2 — Monitorar continuamente o ambiente de entrada</h3>
+      <h3>Etapa 2: Monitorar continuamente o ambiente de entrada</h3>
       <p>O robô deve ser capaz de permanecer em observação ininterrupta, sem perder nenhum
       evento de acionamento dos botões, mesmo operando em alta frequência de verificação.</p>
     </div>
 
     <div class="etapa">
-      <h3>Etapa 3 — Distinguir um toque real de uma interferência elétrica</h3>
+      <h3>Etapa 3: Distinguir um toque real de uma interferência elétrica</h3>
       <p>O robô deve filtrar ruídos elétricos naturais do contato físico dos botões
       (bouncing), reconhecendo como válido apenas um acionamento estável e intencional.
       Essa capacidade é crítica em competições, onde falhas de leitura podem gerar
@@ -408,21 +392,21 @@
     </div>
 
     <div class="etapa">
-      <h3>Etapa 4 — Armazenar uma sequência de comandos com integridade</h3>
+      <h3>Etapa 4: Armazenar uma sequência de comandos com integridade</h3>
       <p>O robô deve registrar, em ordem exata, cada comando escolhido pelo estudante,
       respeitando um limite máximo de memória sem sobrescrever ou corromper dados já
       gravados.</p>
     </div>
 
     <div class="etapa">
-      <h3>Etapa 5 — Reproduzir fielmente a sequência programada</h3>
+      <h3>Etapa 5: Reproduzir fielmente a sequência programada</h3>
       <p>O robô deve executar, comando a comando, exatamente a sequência gravada, sem
       alterações de ordem, omissões ou repetições indevidas, garantindo pausas de
       estabilização entre movimentos.</p>
     </div>
 
     <div class="etapa">
-      <h3>Etapa 6 — Permitir reinício controlado do sistema</h3>
+      <h3>Etapa 6: Permitir reinício controlado do sistema</h3>
       <p>O robô deve descartar completamente uma sequência gravada quando solicitado,
       retornando a um estado limpo, pronto para uma nova programação, sem exigir novo
       carregamento de firmware.</p>
@@ -516,9 +500,8 @@
   <!-- ABA 3 -->
   <section class="aba" id="aba-metas">
 
-    <div id="barra-login" class="barra-login">
-      <span id="texto-login">Entre com sua conta Google para salvar seu progresso e continuar de onde parou em qualquer computador.</span>
-      <button id="btn-login">Entrar com Google</button>
+    <div id="barra-login" class="barra-login conectado">
+      <span id="texto-login">Seu progresso fica salvo neste navegador. Em computadores compartilhados, use "Apagar progresso" ao terminar.</span>
     </div>
 
     <div class="progresso-geral">
@@ -536,10 +519,10 @@
     </div>
 
     <div class="bloco-metas">
-      <h3>Bloco 1 — Entendendo como o robô funciona por dentro</h3>
+      <h3>Bloco 1: Entendendo como o robô funciona por dentro</h3>
 
       <div class="meta" data-meta="1_1">
-        <p class="enunciado"><strong>Meta 1.1</strong> — Consigo explicar, sem olhar o
+        <p class="enunciado"><strong>Meta 1.1:</strong> Consigo explicar, sem olhar o
         código, o que cada parte do programa faz (as configurações do começo, o que roda
         uma vez, o que roda sem parar, e as receitinhas que o programa usa para cada
         tarefa).</p>
@@ -547,14 +530,14 @@
       </div>
 
       <div class="meta" data-meta="1_2">
-        <p class="enunciado"><strong>Meta 1.2</strong> — Consigo explicar por que o robô
+        <p class="enunciado"><strong>Meta 1.2:</strong> Consigo explicar por que o robô
         não confia em um clique só e espera confirmar se o botão foi realmente
         apertado.</p>
         <div class="status-grupo"></div>
       </div>
 
       <div class="meta" data-meta="1_3">
-        <p class="enunciado"><strong>Meta 1.3</strong> — Consigo explicar a diferença
+        <p class="enunciado"><strong>Meta 1.3:</strong> Consigo explicar a diferença
         entre "se acontecer isso, faça aquilo", "repita várias vezes" e "escolha entre
         várias opções", e dizer onde cada um é usado no robô.</p>
         <div class="status-grupo"></div>
@@ -562,24 +545,24 @@
     </div>
 
     <div class="bloco-metas">
-      <h3>Bloco 2 — Pensando como um programador</h3>
+      <h3>Bloco 2: Pensando como um programador</h3>
 
       <div class="meta" data-meta="2_1">
-        <p class="enunciado"><strong>Meta 2.1</strong> — Consigo desenhar ou explicar,
+        <p class="enunciado"><strong>Meta 2.1:</strong> Consigo desenhar ou explicar,
         passo a passo, como o robô guarda na memória cada movimento que o estudante
         escolhe.</p>
         <div class="status-grupo"></div>
       </div>
 
       <div class="meta" data-meta="2_2">
-        <p class="enunciado"><strong>Meta 2.2</strong> — Consigo desenhar ou explicar,
+        <p class="enunciado"><strong>Meta 2.2:</strong> Consigo desenhar ou explicar,
         passo a passo, como o robô pega tudo que foi guardado e executa na ordem
         certa.</p>
         <div class="status-grupo"></div>
       </div>
 
       <div class="meta" data-meta="2_3">
-        <p class="enunciado"><strong>Meta 2.3</strong> — Se o robô fizer algo estranho
+        <p class="enunciado"><strong>Meta 2.3:</strong> Se o robô fizer algo estranho
         (por exemplo, repetir o último movimento duas vezes), consigo imaginar em qual
         parte do programa pode estar o problema.</p>
         <div class="status-grupo"></div>
@@ -587,23 +570,23 @@
     </div>
 
     <div class="bloco-metas">
-      <h3>Bloco 3 — Colocando a mão na massa</h3>
+      <h3>Bloco 3: Colocando a mão na massa</h3>
 
       <div class="meta" data-meta="3_1">
-        <p class="enunciado"><strong>Meta 3.1</strong> — Consigo explicar como os sinais
+        <p class="enunciado"><strong>Meta 3.1:</strong> Consigo explicar como os sinais
         enviados aos motores fazem o robô ir para frente, para trás, ou virar para os
         lados.</p>
         <div class="status-grupo"></div>
       </div>
 
       <div class="meta" data-meta="3_2">
-        <p class="enunciado"><strong>Meta 3.2</strong> — Montei o circuito de exemplo
+        <p class="enunciado"><strong>Meta 3.2:</strong> Montei o circuito de exemplo
         (com o LED) e testei se ele funciona do jeito esperado.</p>
         <div class="status-grupo"></div>
       </div>
 
       <div class="meta" data-meta="3_3">
-        <p class="enunciado"><strong>Meta 3.3</strong> — Consegui alterar o exemplo do
+        <p class="enunciado"><strong>Meta 3.3:</strong> Consegui alterar o exemplo do
         LED para fazer algo diferente (por exemplo, dois tipos de piscada) sem quebrar
         o que já funcionava.</p>
         <div class="status-grupo"></div>
@@ -611,17 +594,17 @@
     </div>
 
     <div class="bloco-metas">
-      <h3>Bloco 4 — Preparando ideias para a competição</h3>
+      <h3>Bloco 4: Preparando ideias para a competição</h3>
 
       <div class="meta" data-meta="4_1">
-        <p class="enunciado"><strong>Meta 4.1</strong> — Tenho uma ideia de algo para
+        <p class="enunciado"><strong>Meta 4.1:</strong> Tenho uma ideia de algo para
         melhorar no robô (um novo movimento, um som, mais espaço de memória) e sei
         explicar por que essa mudança ajudaria.</p>
         <div class="status-grupo"></div>
       </div>
 
       <div class="meta" data-meta="4_2">
-        <p class="enunciado"><strong>Meta 4.2</strong> — Consigo explicar como
+        <p class="enunciado"><strong>Meta 4.2:</strong> Consigo explicar como
         autonomia, precisão nos movimentos, repetir sem erro e lidar bem com falhas
         (assuntos deste material) aparecem nos critérios de provas como a OBR.</p>
         <div class="status-grupo"></div>
@@ -635,7 +618,10 @@
       <textarea id="observacoes" placeholder="Escreva aqui..."></textarea>
     </div>
 
-    <div id="status-salvamento"></div>
+    <div class="rodape-metas">
+      <div id="status-salvamento"></div>
+      <button type="button" id="apagar-progresso">Apagar progresso</button>
+    </div>
   </section>
 
   <!-- ABA 4 -->
@@ -773,10 +759,6 @@ void reproduzirSequencia()
 
 </main>
 
-<!-- Firebase (Autenticação com Google + Firestore) -->
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 
 <script>
 // ================== NAVEGAÇÃO ENTRE ABAS ==================
@@ -789,20 +771,8 @@ document.querySelectorAll('nav.abas button').forEach(btn => {
   });
 });
 
-// ================== CONFIGURAÇÃO DO FIREBASE ==================
-// Substitua pelos dados do SEU projeto Firebase (ver instruções no topo do arquivo)
-const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  projectId: "SEU_PROJETO",
-  storageBucket: "SEU_PROJETO.appspot.com",
-  messagingSenderId: "SEU_ID",
-  appId: "SEU_APP_ID"
-};
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Progresso salvo no próprio navegador (localStorage)
+const CHAVE_LOCAL = 'roboticacsu:manual-olimpico';
 
 // ================== MONTAGEM DOS BOTÕES DE STATUS ==================
 const OPCOES = [
@@ -848,75 +818,51 @@ function atualizarProgresso() {
   document.getElementById('progresso-numero').textContent = percentual + '%';
 }
 
-// ================== SALVAMENTO (com debounce) ==================
+function aplicarDados(dados) {
+  if (!dados) return;
+  Object.keys(estado).forEach(k => delete estado[k]);
+  document.querySelectorAll('.status-grupo button').forEach(b => b.classList.remove('selecionado'));
+  Object.entries(dados.metas || {}).forEach(([chave, valor]) => {
+    estado[chave] = valor;
+    const metaEl = document.querySelector('.meta[data-meta="' + chave + '"]');
+    if (!metaEl) return;
+    metaEl.querySelectorAll('.status-grupo button').forEach(b => {
+      b.classList.toggle('selecionado', b.dataset.status === valor);
+    });
+  });
+  observacoesEl.value = dados.observacoes || '';
+  atualizarProgresso();
+}
+
+// ================== SALVAMENTO ==================
 let temporizador = null;
 const statusSalvamento = document.getElementById('status-salvamento');
 
+function salvarLocal() {
+  try {
+    localStorage.setItem(CHAVE_LOCAL, JSON.stringify({ metas: estado, observacoes: observacoesEl.value }));
+    return true;
+  } catch (e) { return false; }
+}
+
 function salvar() {
-  const usuario = auth.currentUser;
-  if (!usuario) return; // sem login, o progresso fica só nesta sessão do navegador
-
   clearTimeout(temporizador);
-  statusSalvamento.textContent = 'Salvando...';
-
   temporizador = setTimeout(() => {
-    db.collection('autoavaliacoes').doc(usuario.uid).set({
-      nome: usuario.displayName,
-      metas: estado,
-      observacoes: observacoesEl.value,
-      atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true })
-    .then(() => { statusSalvamento.textContent = 'Progresso salvo na sua conta Google.'; })
-    .catch(() => { statusSalvamento.textContent = 'Não foi possível salvar agora. Verifique sua internet.'; });
-  }, 700);
+    statusSalvamento.textContent = salvarLocal()
+      ? 'Progresso salvo neste navegador.'
+      : 'Este navegador não permite salvar o progresso.';
+  }, 300);
 }
 
-function carregarDados(uid) {
-  db.collection('autoavaliacoes').doc(uid).get().then(doc => {
-    if (!doc.exists) return;
-    const dados = doc.data();
+// Carrega o que já estava salvo neste navegador
+try { aplicarDados(JSON.parse(localStorage.getItem(CHAVE_LOCAL))); } catch (e) {}
 
-    if (dados.metas) {
-      Object.entries(dados.metas).forEach(([chave, valor]) => {
-        estado[chave] = valor;
-        const metaEl = document.querySelector('.meta[data-meta="' + chave + '"]');
-        if (!metaEl) return;
-        metaEl.querySelectorAll('.status-grupo button').forEach(b => {
-          b.classList.toggle('selecionado', b.dataset.status === valor);
-        });
-      });
-      atualizarProgresso();
-    }
-
-    if (dados.observacoes) observacoesEl.value = dados.observacoes;
-  });
-}
-
-// ================== LOGIN COM GOOGLE ==================
-const barraLogin = document.getElementById('barra-login');
-const textoLogin = document.getElementById('texto-login');
-const btnLogin = document.getElementById('btn-login');
-
-btnLogin.addEventListener('click', () => {
-  const provedor = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provedor).catch(() => {
-    statusSalvamento.textContent = 'Não foi possível entrar com o Google. Tente novamente.';
-  });
-});
-
-auth.onAuthStateChanged(usuario => {
-  if (usuario) {
-    barraLogin.classList.add('conectado');
-    textoLogin.textContent = 'Conectado como ' + usuario.displayName + '. Seu progresso está sendo salvo automaticamente.';
-    btnLogin.textContent = 'Sair';
-    btnLogin.onclick = () => auth.signOut();
-    carregarDados(usuario.uid);
-  } else {
-    barraLogin.classList.remove('conectado');
-    textoLogin.textContent = 'Entre com sua conta Google para salvar seu progresso e continuar de onde parou em qualquer computador.';
-    btnLogin.textContent = 'Entrar com Google';
-    btnLogin.onclick = () => auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-  }
+// ================== APAGAR PROGRESSO ==================
+document.getElementById('apagar-progresso').addEventListener('click', () => {
+  if (!confirm('Apagar todas as respostas e anotações da autoavaliação?')) return;
+  try { localStorage.removeItem(CHAVE_LOCAL); } catch (e) {}
+  aplicarDados({ metas: {}, observacoes: '' });
+  statusSalvamento.textContent = 'Progresso apagado.';
 });
 </script>
 
