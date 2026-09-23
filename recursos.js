@@ -48,7 +48,7 @@ const RECURSOS = [
     "titulo": "Manual de Programação do Robô Educacional",
     "descricao": "Manual interativo com etapas de funcionamento do robô, estrutura do código em C++, autoavaliação por metas e um exemplo prático simplificado. Os estudantes revisam os conceitos e marcam o próprio progresso conforme avançam.",
     "turma": "olimpica",
-    "tipo": "projeto",
+    "tipo": "codigo",
     "data": "2026-09-23",
     "link": "arquivos/manual-de-programacao-do-robo-educacional-2026-09-23/manual-robo-equipe-olimpica.html",
     "etiquetas": [
