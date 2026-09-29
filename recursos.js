@@ -44,6 +44,15 @@
 
 const RECURSOS = [
   {
+    "id": "simulador-lego-2026-09-29",
+    "titulo": "Simulador Lego",
+    "descricao": "Simulador Lego",
+    "turma": "exploradores",
+    "tipo": "codigo",
+    "data": "2026-09-29",
+    "link": "arquivos/simulador-lego-2026-09-29/oficina-maquinas-simples.html"
+  },
+  {
     "id": "manual-de-programacao-do-robo-educacional-2026-09-23",
     "titulo": "Manual de Programação do Robô Educacional",
     "descricao": "Manual interativo com etapas de funcionamento do robô, estrutura do código em C++, autoavaliação por metas e um exemplo prático simplificado. Os estudantes revisam os conceitos e marcam o próprio progresso conforme avançam.",
