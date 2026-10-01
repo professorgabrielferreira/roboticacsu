@@ -55,7 +55,7 @@ const RECURSOS = [
       "criadores",
       "inventores"
     ],
-    "tipo": "atividade",
+    "tipo": "codigo",
     "data": "2026-10-01",
     "link": "arquivos/cesta-cheia-2026-10-01/cesta-cheia.html"
   },
