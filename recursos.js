@@ -44,6 +44,22 @@
 
 const RECURSOS = [
   {
+    "id": "cesta-cheia-2026-10-01",
+    "titulo": "Cesta Cheia",
+    "descricao": "Jogo",
+    "turma": [
+      "exploradores",
+      "construtores",
+      "inovadores",
+      "descobridores",
+      "criadores",
+      "inventores"
+    ],
+    "tipo": "atividade",
+    "data": "2026-10-01",
+    "link": "arquivos/cesta-cheia-2026-10-01/cesta-cheia.html"
+  },
+  {
     "id": "simulador-lego-2026-09-29",
     "titulo": "Simulador Lego",
     "descricao": "Simulador Lego",
